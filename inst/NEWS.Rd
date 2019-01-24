@@ -1,5 +1,5 @@
-\name{SCENTnews}
-\title{SCENT News}
+\name{LandSCENTnews}
+\title{LandSCENT News}
 \encoding{UTF-8}
 
 
