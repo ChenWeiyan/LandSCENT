@@ -8,8 +8,7 @@ Description: LandSCENT (Landscape Single Cell Entropy) is an R-package for
         be ordered according to differentiation potency.
 Date: 2019-1-23
 Author: Weiyan Chen, Andrew E Teschendorff
-Maintainer: Weiyan Chen <chenweiyan1208@gmail.com>,
-        Andrew E Teschendorff <a.teschendorff@ucl.ac.uk>
+Maintainer: Weiyan Chen <chenweiyan1208@gmail.com>
 Depends: R (>= 3.5)
 Imports: cluster, corpcor, igraph, isva, mclust, parallel, stats,
         grDevices, graphics, marray, scater, Biobase,

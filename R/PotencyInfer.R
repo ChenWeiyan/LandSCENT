@@ -156,6 +156,15 @@
 #' doi:\href{https://doi.org/10.1038/srep03039}{
 #' 10.1038/srep03039}.
 #' 
+#' @examples 
+#' data(Example.m)
+#' data(net13Jun12.m)
+#' Integrataion.l <- DoIntegPPI(exp.m = Example.m[, c(1:58,61:84,86:98,100)], ppiA.m = net13Jun12.m)
+#' Integrataion.l <- CompMaxSR(Integrataion.l)
+#' data(SR.v)
+#' Integrataion.l$SR <- SR.v
+#' potencyInfer.o <- PotencyInfer(Integrataion.l)
+#' 
 #' @import mclust
 #' @import cluster
 #' @import corpcor
@@ -167,6 +176,8 @@
 #' @importFrom dbscan dbscan
 #' @importFrom isva EstDimRMT
 #' @import SingleCellExperiment
+#' @importFrom SummarizedExperiment colData<- 
+#' @importFrom SummarizedExperiment colData
 #' @importFrom stats as.dist
 #' @importFrom stats cor
 #' @importFrom stats median
@@ -282,7 +293,7 @@ PotencyInfer <- function(Integrataion.l,
         irlba_pca_res <- irlba_res$x
         topDim_pca <- irlba_pca_res
         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = 2, 
-                                 pca = F)
+                                 pca = FALSE)
         reducedMatrix <- tsne_res$Y[, 1:2]
         dbsc.v <- vector()
         eps.v <- vector()

@@ -43,7 +43,14 @@ and CellSR figure or not.}
 \item{PDF}{The figure file output format, via pdf (TRUE) file or not, default is TRUE.}
 }
 \value{
+Integrataion.l
+A list contains input information and SR values, potency states and more
+other results. Typically, it contains the same values as the output of
+\code{PotencyInfer}.
 
+PDF file
+If PDF is TRUE(default), then it will automatically generate a pdf file
+ploting cell density against potency states.
 }
 \description{
 Main user function implement LandSCENT. This function is the typical 

@@ -49,8 +49,14 @@
 #' @param PDF
 #' The figure file output format, via pdf (TRUE) file or not, default is TRUE.
 #' 
-#' @return 
+#' @return Integrataion.l
+#' A list contains input information and SR values, potency states and more
+#' other results. Typically, it contains the same values as the output of
+#' \code{PotencyInfer}.
 #' 
+#' @return PDF file
+#' If PDF is TRUE(default), then it will automatically generate a pdf file
+#' ploting cell density against potency states.
 #' 
 #' @export
 #' 

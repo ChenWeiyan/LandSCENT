@@ -111,6 +111,8 @@
 #' @import parallel
 #' @import Biobase
 #' @import SingleCellExperiment
+#' @importFrom SummarizedExperiment colData<- 
+#' @importFrom SummarizedExperiment colData
 #' @export
 #'
 CompSRana <- function(Integrataion.l,

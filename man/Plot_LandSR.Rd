@@ -99,6 +99,16 @@ density distribution against potency states
 Density based visualization tool to generate figures that give the cell 
 density distribution against potency states
 }
+\examples{
+data(tsne.o)
+data(potS.v)
+data(SR4.v)
+scent.o <- list(potS = potS.v)
+potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
+
+Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
+
+}
 \references{
 Teschendorff AE, Tariq Enver. 
 \emph{Single-cell entropy for accurate estimation of differentiation 

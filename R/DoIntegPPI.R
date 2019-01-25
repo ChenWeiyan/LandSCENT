@@ -97,6 +97,7 @@
 #' 
 #' @import Biobase
 #' @import Matrix
+#' @import scater
 #' @importFrom scater normalise
 #' @importFrom scater librarySizeFactors
 #' @importFrom igraph graph.adjacency

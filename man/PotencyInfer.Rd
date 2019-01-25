@@ -132,6 +132,16 @@ and finally infers the dependencies of these landmarks which can
 aid in recontructing lineage trajectories in time course scRNA-Seq 
 experiments.
 }
+\examples{
+data(Example.m)
+data(net13Jun12.m)
+Integrataion.l <- DoIntegPPI(exp.m = Example.m[, c(1:58,61:84,86:98,100)], ppiA.m = net13Jun12.m)
+Integrataion.l <- CompMaxSR(Integrataion.l)
+data(SR.v)
+Integrataion.l$SR <- SR.v
+potencyInfer.o <- PotencyInfer(Integrataion.l)
+
+}
 \references{
 Teschendorff AE, Tariq Enver. 
 \emph{Single-cell entropy for accurate estimation of differentiation 

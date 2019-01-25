@@ -113,6 +113,15 @@
 #' doi:\href{https://doi.org/10.1038/ncomms15599}{
 #' 10.1038/ncomms15599}.
 #' 
+#' @examples 
+#' data(tsne.o)
+#' data(potS.v)
+#' data(SR4.v)
+#' scent.o <- list(potS = potS.v)
+#' potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
+#' 
+#' Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
+#' 
 #' @import Rtsne
 #' @import MASS
 #' @import plot3D
@@ -149,7 +158,7 @@ Plot_LandSR <- function(Integrataion.l,
         irlba_pca_res <- irlba_res$x
         topDim_pca <- irlba_pca_res
         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 
-                                 pca = F)
+                                 pca = FALSE)
         reducedMatrix <- tsne_res$Y[, 1:max_components]
         component1.v <- reducedMatrix[, 1]
         component2.v <- reducedMatrix[, 2]
