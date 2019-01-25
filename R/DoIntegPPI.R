@@ -98,6 +98,7 @@
 #' @import Biobase
 #' @import Matrix
 #' @import scater
+#' @importFrom BiocGenerics estimateSizeFactors
 #' @importFrom scater normalise
 #' @importFrom scater librarySizeFactors
 #' @importFrom igraph graph.adjacency
@@ -119,7 +120,7 @@ DoIntegPPI <- function(exp.m,
         exp.m <- scater::normalise(exp.m, log_exprs_offset = 1.1)
         data.m <- Matrix::as.matrix(SummarizedExperiment::assay(exp.m, i = "logcounts"))
     }else if (data.class == "CellDataSet") {
-        exp.m <- estimateSizeFactors(exp.m)
+        exp.m <- BiocGenerics::estimateSizeFactors(exp.m)
         data.m <- Matrix::as.matrix(t(t(Biobase::exprs(exp.m)) / 
                                           Biobase::pData(exp.m)[, 'Size_Factor']))
         data.m <- log2(data.m + 1.1)
