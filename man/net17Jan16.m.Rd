@@ -4,12 +4,15 @@
 \name{net17Jan16.m}
 \alias{net17Jan16.m}
 \title{Protein-protein interaction network 17Jan16}
-\format{A matrix with 8374 rows and 8374 columns}
+\format{A matrix with 11751 rows and 11751 columns}
 \usage{
 data(net17Jan16.m)
 }
 \description{
-This protein-protein interaction network
+This protein-protein interaction network is derived from Pathway 
+Commons (www.pathwaycommons.org) (version Jan. 2016), which is 
+an integrated resource collating together PPIs from several 
+distinct sources.
 }
 \details{
 \itemize{

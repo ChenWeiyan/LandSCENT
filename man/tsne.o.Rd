@@ -4,12 +4,12 @@
 \name{tsne.o}
 \alias{tsne.o}
 \title{Reduced dimension matrix for example plot scRNA-seq data}
-\format{A numeric matrix with two colums}
+\format{A numeric matrix with two colums and 3473 rows}
 \usage{
 data(tsne.o)
 }
 \description{
-Dimension reduced via \code{tsne}.
+Dimension reduced via \code{tsne} function.
 }
 \details{
 \itemize{

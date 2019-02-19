@@ -193,34 +193,25 @@ Example.m <- Example.m[, !(libsize.drop | feature.drop | mito.drop | spike.drop)
 ```
 
 ```{r integrate scRNA-seq and PPI network, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-Integrataion.l <- DoIntegPPI(exp.m = Example.m, ppiA.m = net13Jun12.m)
-str(Integrataion.l)
+Integration.l <- DoIntegPPI(exp.m = Example.m, ppiA.m = net13Jun12.m)
+str(Integration.l)
 ```
 
 `DoIntegPPI` function takes these two arguments as input. The function finds the overlap between the gene identifiers labeling the network and those labeling the rows of the scRNA-seq matrix, and then extracts the maximally connected subnetwork, specified by the *adjMC* output argument. Also, the function constructs the reduced scRNA-Seq matrix, specified by the *expMC* output argument.
 
-With the output object *Integrataion.l*, we can now compute the maximum possible SR value (denoted *maxSR*) for the reduced network (given by the output argument *adjMC*), which provides a convenient normalization factor. This normalization factor can be easily calculated using the `CompMaxSR` function:
+With the output object *Integration.l*, we can now proceed to compute the SR value for any given cell, using the `CompSRana` function. It takes five objects as input:
 
-```{r compute maximum possible SR, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-Integrataion.l <- CompMaxSR(Integrataion.l)
-Integrataion.l$maxSR
-```
-
-`CompMaxSR` function takes output argument *Integrataion.l* from the `DoIntegPPI` function as the input, and calculates the *maxSR* value based on the network structure of *adjMC*. This normalization factor ensures that the SR value of any given cell will scale between 0 and 1. The new element *maxSR* will be added to the input list.
-
-Having obtained the normalization factor *Integrataion.l$maxSR*, we can then proceed to compute the SR value for any given cell, using the `CompSRana` function. It takes five objects as input:
-
-* The output object *Integrataion.l* either from `CompMaxSR` function or from `DoIntegPPI` function (if you do not want to normalize the SR values);
-* *local*, a logical parameter local to tell the function whether to report back the local, i.e. gene-centric, signaling entropies;
+* The output object *Integration.l* from `DoIntegPPI` function;
+* *local*, a logical parameter to tell the function whether to report back the normalized local, i.e. gene-centric, signaling entropies;
 * *mc.cores*, the number of cores to use, i.e. at most how many child processes will be run simultaneously. We use `parallel` package in this function with a defult *mc.cores* value of 1.
 
 ```{r compute SR, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-SR.o <- CompSRana(Integrataion.l, local = TRUE, mc.cores = 40)
+SR.o <- CompSRana(Integration.l, local = TRUE, mc.cores = 40)
 ```
 
-Here we run the `CompSRana` function with 30 cores, which means the computer should have at least 30 processing cores. In your case, you may set *mc.cores* value based on your own computer/sever.
+Here we run the `CompSRana` function with 40 cores, which means the computer should have at least 40 processing cores. In your case, you may set *mc.cores* value based on your own computer/sever.
 
-The output argument *SR.o* is a list that added four elements onto the input *Integrataion.l*:
+The output argument *SR.o* is a list that added four elements onto the input *Integration.l*:
 
 * *SR*: the SR value of the cells.
 * *inv*: a matrix specifiying the invariant measure, or steady-state probability, over the network. That is, every column length will be equal to the number of nodes in the *adjMC* matrix, and its entries must add to 1.
@@ -235,8 +226,8 @@ As we mentioned above, we provide the example's phenotype infromation in the pac
 
 ```{r load SR, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 data(SR.v)
-Integrataion.l$SR <- SR.v
-SR.o <- Integrataion.l
+Integration.l$SR <- SR.v
+SR.o <- Integration.l
 ```
 
 ```{r boxplot, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
@@ -279,11 +270,11 @@ Such results will also be stored for `SingleCellExperiment` and `CellDataSet` ob
 
 ## Application on bulk samples
 
-One important feature of `LandSCENT` package is that it can be applied on bulk RNA-seq data. The procedure is identical with single-cell RNA-Seq data, the only difference is in the specific preprocessing and normalization of the data.
+One important feature of `LandSCENT` package is that it can also be applied on bulk RNA-seq data. The procedure is identical with single-cell RNA-Seq data, the only difference is in the specific preprocessing and normalization of the data.
 
 ## Density based visualization tool
 
-```{r , eval=TRUE, echo=FALSE}
+```{r , eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 data(tsne.o)
 data(potS.v)
 data(SR4.v)

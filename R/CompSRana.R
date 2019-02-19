@@ -6,16 +6,16 @@
 #'  
 #' @description 
 #' This is the main user function for computing signaling entropy of 
-#' single cells. It takes as input the gene expression profile of a 
-#' single cell and the adjacency matrix of a connected network. These 
-#' inputs will be typically the output of the \code{DoIntePPI} function.
+#' single cells. It takes as input the gene expression profile of 
+#' single cells and the adjacency matrix of a connected network. These 
+#' inputs will be typically the output of the \code{DoIntegPPI} function.
 #' 
-#' @param Integrataion.l
-#' A list object ether from \code{DoIntePPI} function or \code{CompMaxSR} function.
+#' @param Integration.l
+#' A list object from \code{DoIntegPPI} function.
 #' 
 #' @param local
-#' A logical. If true (default), function computes the local signaling 
-#' entropies of each gene in the network.
+#' A logical. If true (default), function computes the normalized 
+#' local signaling entropies of each gene in the network.
 #' 
 #' @param mc.cores
 #' The number of cores to use, i.e. at most how many child processes will 
@@ -26,11 +26,11 @@
 #' @return A list incorporates the input list and four new elements:
 #' 
 #' @return SR
-#' The global signaling entropy rate. If \code{maxSR} is provided,
-#' then it is normalized by the maximum rate, hence a value between 0 and 1
+#' The global signaling entropy rate. It is normalized by the 
+#' maximum rate, hence a value between 0 and 1
 #' 
 #' @return inv
-#' The stationary distribution of the sample
+#' The stationary distribution of every sample
 #' 
 #' @return s
 #' The unnormlised local entropies of each gene in every cell
@@ -38,15 +38,6 @@
 #' @return ns
 #' The normalised local entropies of each gene, so that each value is 
 #' between 0 and 1
-#' 
-#' @details 
-#' This function computes the signaling entropy for each individual 
-#' sample (say a single cell) in the expression matrix provided as 
-#' input. The input is an expression vector, not matrix, to allow 
-#' user-flexibility for those wishing to run this in 
-#' parallel (e.g. using parallel library).
-#' 
-#' @author Andrew E Teschendorff
 #' 
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
@@ -100,36 +91,34 @@
 #' rownames(exp.m) <- paste("G",1:20,sep="");
 #' 
 #' ### integrate data and network
-#' Integrataion.l <- DoIntegPPI(exp.m, ppiA.m);
+#' Integration.l <- DoIntegPPI(exp.m, ppiA.m);
 #' 
 #' ### compute SR values
-#' Integrataion.l <- CompSRana(Integrataion.l);
+#' Integration.l <- CompSRana(Integration.l);
 #' 
 #' ### output global signaling entropy
-#' print(Integrataion.l$SR);
+#' print(Integration.l$SR);
 #' 
 #' @import parallel
 #' @import Biobase
 #' @import SingleCellExperiment
+#' @importFrom igraph arpack
 #' @importFrom SummarizedExperiment colData<- 
 #' @importFrom SummarizedExperiment colData
 #' @export
 #'
-CompSRana <- function(Integrataion.l,
+CompSRana <- function(Integration.l,
                       local=TRUE,
                       mc.cores=1)
 {
-    ### see if maxSR provied or not
-    if (is.null(Integrataion.l$maxSR) == TRUE) {
-        maxSR <- NULL
-    }else {
-        maxSR <- Integrataion.l$maxSR
-    }
+    ### compute maxSR for SR normalization
+    Integration.l <- CompMaxSR(Integration.l)
+    maxSR <- Integration.l$maxSR
     
-    idx.l <- as.list(seq_len(ncol(Integrataion.l$expMC)))
+    idx.l <- as.list(seq_len(ncol(Integration.l$expMC)))
     out.l <- mclapply(idx.l, CompSRanaPRL, 
-                      exp.m=Integrataion.l$expMC, 
-                      adj.m=Integrataion.l$adjMC,
+                      exp.m=Integration.l$expMC, 
+                      adj.m=Integration.l$adjMC,
                       local=local,
                       maxSR=maxSR,
                       mc.cores=mc.cores)
@@ -138,18 +127,37 @@ CompSRana <- function(Integrataion.l,
     S.v <- sapply(out.l, function(v) return(v[[3]]))
     NS.v <- sapply(out.l, function(v) return(v[[4]]))
     
-    Integrataion.l$SR <- SR.v
-    Integrataion.l$inv <- invP.v
-    Integrataion.l$s <- S.v
-    Integrataion.l$ns <- NS.v
+    Integration.l$SR <- SR.v
+    Integration.l$inv <- invP.v
+    Integration.l$s <- S.v
+    Integration.l$ns <- NS.v
     
-    if (!is.null(Integrataion.l$data.sce)) {
-        colData(Integrataion.l$data.sce)$SR <- SR.v
-    }else if (!is.null(Integrataion.l$data.cds)) {
-        pData(Integrataion.l$data.cds)$SR <- SR.v
+    if (!is.null(Integration.l$data.sce)) {
+        colData(Integration.l$data.sce)$SR <- SR.v
+    }else if (!is.null(Integration.l$data.cds)) {
+        pData(Integration.l$data.cds)$SR <- SR.v
     }
+    return(Integration.l)
+}
+
+CompMaxSR <- function(Integration.l){
     
-    return(Integrataion.l)
+    adj.m <- Integration.l$adjMC
+    
+    # find right eigenvector of adjacency matrix
+    fa <- function(x,extra=NULL) {
+        as.vector(adj.m %*% x)
+    }
+    ap.o <- igraph::arpack(fa,options=list(n=nrow(adj.m),nev=1,which="LM"), sym=TRUE)
+    v <- ap.o$vectors
+    lambda <- ap.o$values
+    
+    # maximum entropy
+    MaxSR <- log(lambda)
+    
+    Integration.l$maxSR <- MaxSR
+    
+    return(Integration.l)
 }
 
 CompSRanaPRL <- function(idx,
@@ -179,4 +187,24 @@ CompSRanaPRL <- function(idx,
         NS.v <- NULL;
     }
     return(list(sr=SR,inv=invP.v,s=S.v,ns=NS.v));
+}
+
+CompNS <- function(p.v){
+    
+    tmp.idx <- which(p.v>0);
+    if(length(tmp.idx)>1){
+        NLS <- -sum( p.v[tmp.idx]*log(p.v[tmp.idx]) )/log(length(tmp.idx));
+    }
+    else {
+        # one degree nodes have zero entropy, avoid singularity.
+        NLS <- 0;
+    }
+    return(NLS);
+}
+
+CompS <- function(p.v){
+    
+    tmp.idx <- which(p.v>0);
+    LS <-  - sum( p.v[tmp.idx]*log(p.v[tmp.idx]) )
+    return(LS);
 }

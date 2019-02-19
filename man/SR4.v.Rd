@@ -10,7 +10,7 @@ data(SR4.v)
 }
 \description{
 SR values calculated from \code{CompSRana} function with the input 
-of example scRNA-seq data and network information.
+of example plot scRNA-seq data and network information.
 }
 \details{
 \itemize{

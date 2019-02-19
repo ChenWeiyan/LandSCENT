@@ -3,8 +3,8 @@
 \docType{data}
 \name{phenoExample.v}
 \alias{phenoExample.v}
-\title{Phenotype of the example scRNA-seq data}
-\format{A character vector includes 50 elements}
+\title{Phenotype information of the example scRNA-seq data}
+\format{A character vector includes 100 elements}
 \usage{
 data(phenoExample.v)
 }

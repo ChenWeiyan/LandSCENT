@@ -5,13 +5,13 @@
 \title{Computes the signaling entropy of given gene expression profiles 
 over a given connected network}
 \usage{
-CompSRana(Integrataion.l, local = TRUE, mc.cores = 1)
+CompSRana(Integration.l, local = TRUE, mc.cores = 1)
 }
 \arguments{
-\item{Integrataion.l}{A list object ether from \code{DoIntePPI} function or \code{CompMaxSR} function.}
+\item{Integration.l}{A list object from \code{DoIntegPPI} function.}
 
-\item{local}{A logical. If true (default), function computes the local signaling 
-entropies of each gene in the network.}
+\item{local}{A logical. If true (default), function computes the normalized 
+local signaling entropies of each gene in the network.}
 
 \item{mc.cores}{The number of cores to use, i.e. at most how many child processes will 
 be run simultaneously. The option is initialized from environment variable 
@@ -22,11 +22,11 @@ least two cores.}
 A list incorporates the input list and four new elements:
 
 SR
-The global signaling entropy rate. If \code{maxSR} is provided,
-then it is normalized by the maximum rate, hence a value between 0 and 1
+The global signaling entropy rate. It is normalized by the 
+maximum rate, hence a value between 0 and 1
 
 inv
-The stationary distribution of the sample
+The stationary distribution of every sample
 
 s
 The unnormlised local entropies of each gene in every cell
@@ -37,16 +37,9 @@ between 0 and 1
 }
 \description{
 This is the main user function for computing signaling entropy of 
-single cells. It takes as input the gene expression profile of a 
-single cell and the adjacency matrix of a connected network. These 
-inputs will be typically the output of the \code{DoIntePPI} function.
-}
-\details{
-This function computes the signaling entropy for each individual 
-sample (say a single cell) in the expression matrix provided as 
-input. The input is an expression vector, not matrix, to allow 
-user-flexibility for those wishing to run this in 
-parallel (e.g. using parallel library).
+single cells. It takes as input the gene expression profile of 
+single cells and the adjacency matrix of a connected network. These 
+inputs will be typically the output of the \code{DoIntegPPI} function.
 }
 \examples{
 ### define a small network
@@ -64,13 +57,13 @@ colnames(exp.m) <- paste("S",1:10,sep="");
 rownames(exp.m) <- paste("G",1:20,sep="");
 
 ### integrate data and network
-Integrataion.l <- DoIntegPPI(exp.m, ppiA.m);
+Integration.l <- DoIntegPPI(exp.m, ppiA.m);
 
 ### compute SR values
-Integrataion.l <- CompSRana(Integrataion.l);
+Integration.l <- CompSRana(Integration.l);
 
 ### output global signaling entropy
-print(Integrataion.l$SR);
+print(Integration.l$SR);
 
 }
 \references{
@@ -108,7 +101,4 @@ Waddington's differentiation landscape.}
 Scientific reports 3 (2013): 3039.
 doi:\href{https://doi.org/10.1038/srep03039}{
 10.1038/srep03039}.
-}
-\author{
-Andrew E Teschendorff
 }

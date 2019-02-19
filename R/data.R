@@ -1,7 +1,7 @@
 #' Normalized example scRNA-seq data matrix
 #' 
-#' Normalized example scRNA-seq data matrix of 100 human 
-#' embryonic stem cells(hESC) and 100 mesoderm progenitor cells(EC)
+#' Normalized example scRNA-seq data matrix of 50 human 
+#' embryonic stem cells(hESC) and 50 mesoderm progenitor cells(EC)
 #' from Chu et al. 2016.
 #'
 #' \itemize{
@@ -34,7 +34,10 @@ NULL
 
 #' Protein-protein interaction network 13Jun12
 #'
-#' This protein-protein interaction network
+#' This protein-protein interaction network is derived from Pathway 
+#' Commons (www.pathwaycommons.org) (version Jun. 2012), which is 
+#' an integrated resource collating together PPIs from several 
+#' distinct sources.
 #'
 #' \itemize{
 #'   \item 121268 : Gene EntrzID 
@@ -47,7 +50,7 @@ NULL
 #' @keywords network
 #' @name net13Jun12.m
 #' @usage data(net13Jun12.m)
-#' @format A matrix with 8374 rows and 8374 columns
+#' @format A matrix with 8434 rows and 8434 columns
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
 #' \emph{Single-cell entropy for accurate estimation of differentiation 
@@ -60,7 +63,10 @@ NULL
 
 #' Protein-protein interaction network 17Jan16
 #'
-#' This protein-protein interaction network
+#' This protein-protein interaction network is derived from Pathway 
+#' Commons (www.pathwaycommons.org) (version Jan. 2016), which is 
+#' an integrated resource collating together PPIs from several 
+#' distinct sources.
 #'
 #' \itemize{
 #'   \item 121268 : Gene EntrzID
@@ -73,7 +79,7 @@ NULL
 #' @keywords network
 #' @name net17Jan16.m
 #' @usage data(net17Jan16.m)
-#' @format A matrix with 8374 rows and 8374 columns
+#' @format A matrix with 11751 rows and 11751 columns
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
 #' \emph{Single-cell entropy for accurate estimation of differentiation 
@@ -84,7 +90,7 @@ NULL
 #' 
 NULL
 
-#' Phenotype of the example scRNA-seq data
+#' Phenotype information of the example scRNA-seq data
 #' 
 #' Phenotype information for the example scRNA-seq data matrix of 50 human 
 #' embryonic stem cells(hESC) and 50 mesoderm progenitor cells(EC)
@@ -99,7 +105,7 @@ NULL
 #' @keywords datasets
 #' @name phenoExample.v
 #' @usage data(phenoExample.v)
-#' @format A character vector includes 50 elements
+#' @format A character vector includes 100 elements
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
 #' \emph{Single-cell entropy for accurate estimation of differentiation 
@@ -120,7 +126,8 @@ NULL
 
 #' Phenotype information for Chu et al. scRNA-seq data
 #' 
-#' Phenotype information for the normalized scRNA-seq data matrix from Chu et al. 2016.
+#' Phenotype information for the whole scRNA-seq data matrix 
+#' from Chu et al. 2016.
 #'
 #' \itemize{
 #'   \item hESC : human embryonic stem cells(n=374)
@@ -156,7 +163,8 @@ NULL
 
 #' Potency states for example plot scRNA-seq data
 #' 
-#' Potency states infered from \code{PotencyInfer}.
+#' Potency states infered from \code{PotencyInfer} function with 
+#' example scRNA-seq data.
 #'
 #' \itemize{
 #'   \item Potency States : numbers indicates potency levels
@@ -166,7 +174,7 @@ NULL
 #' @keywords datasets
 #' @name potS.v
 #' @usage data(potS.v)
-#' @format A numeric vector
+#' @format A numeric vector includes 3473 elements
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
 #' \emph{Single-cell entropy for accurate estimation of differentiation 
@@ -239,7 +247,7 @@ NULL
 #' SR values for example plot scRNA-seq data
 #' 
 #' SR values calculated from \code{CompSRana} function with the input 
-#' of example scRNA-seq data and network information.
+#' of example plot scRNA-seq data and network information.
 #'
 #' \itemize{
 #'   \item SR value : Normalized Signaling Entropy Rate
@@ -262,7 +270,7 @@ NULL
 
 #' Reduced dimension matrix for example plot scRNA-seq data
 #' 
-#' Dimension reduced via \code{tsne}.
+#' Dimension reduced via \code{tsne} function.
 #'
 #' \itemize{
 #'   \item data projection values in two-dimension space
@@ -272,7 +280,7 @@ NULL
 #' @keywords datasets
 #' @name tsne.o
 #' @usage data(tsne.o)
-#' @format A numeric matrix with two colums
+#' @format A numeric matrix with two colums and 3473 rows
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
 #' \emph{Single-cell entropy for accurate estimation of differentiation 

@@ -4,7 +4,7 @@
 \alias{Plot_CellSR}
 \title{Plot Cell density with SR values}
 \usage{
-Plot_CellSR(Integrataion.l, reducedMatrix = NULL, num_dim = 50,
+Plot_CellSR(Integration.l, reducedMatrix = NULL, num_dim = 50,
   max_components = 2, num_grid = 50, reduceDim = TRUE, phi = 20,
   theta = 20, colpersp = NULL, colimage = NULL,
   colkeypersp = list(length = 0.2, width = 0.4, shift = 0.2, cex.axis =
@@ -13,10 +13,11 @@ Plot_CellSR(Integrataion.l, reducedMatrix = NULL, num_dim = 50,
   lphi = 90, bty = "b", PDF = TRUE)
 }
 \arguments{
-\item{Integrataion.l}{Typically, it is the output from \code{PotencyInfer} function}
+\item{Integration.l}{Typically, it is the output from \code{PotencyInfer} function}
 
 \item{reducedMatrix}{The previous reduced dimension matrix, with rows lalabeling cells and two
-colums labeling reduced dimensions.}
+colums labeling reduced dimensions. Only used when \code{reduceDim} is 
+set to be FALSE}
 
 \item{num_dim}{number of dimension used for PCA}
 
@@ -27,19 +28,18 @@ integer vector}
 
 \item{reduceDim}{A logical, do deminsion reduction or not, default is TRUE}
 
-\item{phi}{The angles defining the viewing direction. theta gives the 
-azimuthal direction and phi the colatitude}
+\item{phi}{The angles defining the viewing direction. phi gives the colatitude}
 
 \item{theta}{The angles defining the viewing direction. theta gives the 
-azimuthal direction and phi the colatitude}
+azimuthal direction}
 
 \item{colpersp}{Color palette to be used for the colvar variable, i.e. the cell density.
-If col is NULL (default) and colvar is specified, then a red-magenta-lightgray 
-colorscheme will be used.}
+If colpersp is NULL (default) and colvar is specified, then a 
+red-magenta-lightgray colorscheme will be used}
 
-\item{colimage}{Color palette to be used for the colvar variable, i.e. the cell density.
-If col is NULL (default) and colvar is specified, then a blue-lightblue-white 
-colorscheme will be used.}
+\item{colimage}{Color palette to be used for the colvar variable, i.e. the SR values.
+If colimage is NULL (default) and colvar is specified, then a 
+blue-lightblue-white colorscheme will be used.}
 
 \item{colkeypersp}{A logical, or a list (default) with parameters for the color 
 key (legend). List parameters should be one of side, plot, 
@@ -52,9 +52,9 @@ The defaults for the parameters are length = 0.2, width = 0.4,
 shift = 0.15, cex.axis = 0.6, cex.clab = 0.65
 The default is to draw the color key on side = 4, i.e. in the right 
 margin. 
-If colkey = NULL then a color key will be added only if 
-col is a vector. Setting colkey = list(plot = FALSE) will create 
-room for the color key without drawing it. if colkey = FALSE, 
+If colkeypersp = NULL then a color key will be added only if 
+col is a vector. Setting colkeypersp = list(plot = FALSE) will create 
+room for the color key without drawing it. if colkeypersp = FALSE, 
 no color key legend will be added.
 See more details in ?plot3D::persp3D}
 
@@ -69,33 +69,34 @@ The defaults for the parameters are length = 0.2, width = 0.4,
 shift = -0.15, cex.axis = 0.6, cex.clab = 0.65
 The default is to draw the color key on side = 4, i.e. in the right 
 margin. 
-If colkey = NULL then a color key will be added only if 
-col is a vector. Setting colkey = list(plot = FALSE) will create 
-room for the color key without drawing it. if colkey = FALSE, 
+If colkeyimage = NULL then a color key will be added only if 
+col is a vector. Setting colkeyimage = list(plot = FALSE) will create 
+room for the color key without drawing it. if colkeyimage = FALSE, 
 no color key legend will be added.
 See more details in ?plot3D::image3D}
 
-\item{lighting}{If not FALSE the facets will be illuminated, and colors may 
-appear more bright}
+\item{lighting}{A logical. If TRUE, the facets will be illuminated, and colors may 
+appear more bright. Default is FALSE}
 
 \item{lphi}{if finite values are specified for lphi, the surface is 
 shaded as though it was being illuminated from the direction 
 specified by colatitude lphi}
 
-\item{bty}{The type of the box, the default only drawing background panels}
+\item{bty}{The type of the box ("b" or "f"), the default only 
+drawing background panels}
 
-\item{PDF}{The output format, via pdf file or not, default is TRUE}
+\item{PDF}{A logical. Output figure via pdf file or not, default is TRUE}
 }
 \value{
 A pdf file contains the generated figures
 }
 \description{
 Density based visualization tool to generate figures that give the cell 
-density distribution against potency states
+density distribution with SR value distribution
 }
 \details{
 Density based visualization tool to generate figures that give the cell 
-density distribution against potency states
+density distribution against SR value distribution
 }
 \examples{
 data(tsne.o)

@@ -10,17 +10,21 @@
 #' of signaling entropy.
 #' 
 #' @param exp.m
-#' Can be three kinds of input.
+#' Can be three major kinds of input:
 #' One is a scRNA-Seq data matrix with rows labeling genes and columns 
-#' labeling single cells, which is not log-transformed (can be FPKM, TPM etc.).
-#' And rownames must be provided and must be the same with the 
-#' rownames of \code{ppiA.m}.
-#' The other kinds of two input can be either a "SingleCellExperiment"
+#' labeling single cells. And it can be either a log-transformed data
+#' matrix with minimal value around 0.1 (recommended), or an 
+#' nonlog-transformed data matrix with minimal value 0.
+#' The other two kinds of input can be either a "SingleCellExperiment"
 #' class object or a "CellDataSet" class object
 #' 
 #' @param ppiA.m
 #' The adjacency matrix of a user-given PPI network with rownames and 
-#' colnames labeling genes (same gene identifier as in \code{exp.m}).
+#' colnames labeling genes (same gene identifier as in \code{exp.m})
+#' 
+#' @param log_trans
+#' A logical. Whether to do log-transformation on the input data
+#' matrix or not. Default is FALSE
 #' 
 #' @return A list of two or three objects:
 #' 
@@ -31,13 +35,7 @@
 #' Adjacency matrix of the maximally connected subnetwork
 #' 
 #' @return data.sce/data.cds
-#' Orginal input data objects
-#' 
-#' @details 
-#' This function finds the common genes between the scRNA-Seq data matrix 
-#' and the genes present in the PPI network, and constructs the maximally 
-#' connected subnetwork and reduced expression matrix for the computation 
-#' of signaling entropy.
+#' Orginal input sce/cds data objects
 #'  
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
@@ -91,9 +89,9 @@
 #' rownames(exp.m) <- paste("G",1:20,sep="");
 #' 
 #' ### run integration function
-#' Integrataion.l <- DoIntegPPI(exp.m,ppiA.m);
-#' print(dim(Integrataion.l$expMC));
-#' print(dim(Integrataion.l$adjMC));
+#' Integration.l <- DoIntegPPI(exp.m,ppiA.m);
+#' print(dim(Integration.l$expMC));
+#' print(dim(Integration.l$adjMC));
 #' 
 #' @import Biobase
 #' @import Matrix
@@ -109,7 +107,8 @@
 #' @export
 #'     
 DoIntegPPI <- function(exp.m, 
-                       ppiA.m)
+                       ppiA.m,
+                       log_trans = FALSE)
 {
     # set input data matrix class
     data.class <- class(exp.m)
@@ -126,10 +125,19 @@ DoIntegPPI <- function(exp.m,
         data.m <- log2(data.m + 1.1)
     }else{
         data.m <- exp.m
+        if (log_trans) {
+            TRC.v <- colSums(exp.m)
+            maxC <- max(TRC.v)
+            for (i in seq_len(dim(data.m)[2])) {
+                temp <- maxC / TRC.v[i]
+                data.m[, i] <- log2(exp.m[, i] * temp + 1.1)
+            }
+        }
     }
     
     if (min(data.m) == 0) {
-        stop("Input matrix must have non-zero minimal value or set log_norm = TRUE!")
+        stop("Input matrix must have non-zero minimal value, please set 
+             log_trans = TRUE!")
     }
     
     commonEID.v <- intersect(rownames(ppiA.m),rownames(data.m))

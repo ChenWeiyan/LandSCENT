@@ -4,12 +4,13 @@
 \name{potS.v}
 \alias{potS.v}
 \title{Potency states for example plot scRNA-seq data}
-\format{A numeric vector}
+\format{A numeric vector includes 3473 elements}
 \usage{
 data(potS.v)
 }
 \description{
-Potency states infered from \code{PotencyInfer}.
+Potency states infered from \code{PotencyInfer} function with 
+example scRNA-seq data.
 }
 \details{
 \itemize{

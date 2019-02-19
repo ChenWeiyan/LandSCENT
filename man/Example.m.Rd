@@ -9,8 +9,8 @@
 data(Example.m)
 }
 \description{
-Normalized example scRNA-seq data matrix of 100 human 
-embryonic stem cells(hESC) and 100 mesoderm progenitor cells(EC)
+Normalized example scRNA-seq data matrix of 50 human 
+embryonic stem cells(hESC) and 50 mesoderm progenitor cells(EC)
 from Chu et al. 2016.
 }
 \details{

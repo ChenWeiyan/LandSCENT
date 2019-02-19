@@ -5,10 +5,12 @@
 \alias{LandSCENT-package}
 \title{Landscape Single Cell Entropy}
 \description{
-\pkg{LandSCENT} (Landscape Single Cell Entropy) is an R-package for the 
-analysis of single-cell RNA-Seq data. The most important feature of this 
+\pkg{LandSCENT} (Landscape Single Cell Entropy) is a R-package for the 
+analysis of single-cell RNA-Seq data. One important feature of this 
 package is the computation of signaling entropy, which allows single 
-cells to be ordered according to differentiation potency.
+cells to be ordered according to differentiation potency. \pkg{LandSCENT} 
+also integrates cell density with potency distribution to dissect cell types
+across all potency states and generates high-quality figures to show this.
 }
 \details{
 \packageIndices{LandSCENT}
@@ -24,7 +26,7 @@ clusters, which for instance can help identify lineage trajectories in
 time course differentiation experiments.
 }
 \examples{
-### see example for \\code{DoSCENT} function for typical workflow
+### see example for DoLandSCENT function for typical workflow
 
 }
 \references{
@@ -64,5 +66,5 @@ doi:\href{https://doi.org/10.1038/srep03039}{
 10.1038/srep03039}.
 }
 \author{
-Andrew E Teschendorff
+Weiyan Chen & Andrew E Teschendorff
 }

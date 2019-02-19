@@ -9,7 +9,8 @@
 data(phenoscChu.v)
 }
 \description{
-Phenotype information for the normalized scRNA-seq data matrix from Chu et al. 2016.
+Phenotype information for the whole scRNA-seq data matrix 
+from Chu et al. 2016.
 }
 \details{
 \itemize{

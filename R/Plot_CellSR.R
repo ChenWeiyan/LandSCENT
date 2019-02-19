@@ -5,14 +5,15 @@
 #'  
 #' @description 
 #' Density based visualization tool to generate figures that give the cell 
-#' density distribution against potency states
+#' density distribution with SR value distribution
 #' 
-#' @param Integrataion.l
+#' @param Integration.l
 #' Typically, it is the output from \code{PotencyInfer} function
 #' 
 #' @param reducedMatrix
 #' The previous reduced dimension matrix, with rows lalabeling cells and two
-#' colums labeling reduced dimensions.
+#' colums labeling reduced dimensions. Only used when \code{reduceDim} is 
+#' set to be FALSE
 #' 
 #' @param num_dim
 #' number of dimension used for PCA
@@ -28,22 +29,21 @@
 #' A logical, do deminsion reduction or not, default is TRUE
 #' 
 #' @param phi
-#' The angles defining the viewing direction. theta gives the 
-#' azimuthal direction and phi the colatitude
+#' The angles defining the viewing direction. phi gives the colatitude
 #' 
 #' @param theta
 #' The angles defining the viewing direction. theta gives the 
-#' azimuthal direction and phi the colatitude
+#' azimuthal direction
 #' 
 #' @param colpersp
 #' Color palette to be used for the colvar variable, i.e. the cell density.
-#' If col is NULL (default) and colvar is specified, then a red-magenta-lightgray 
-#' colorscheme will be used.
+#' If colpersp is NULL (default) and colvar is specified, then a 
+#' red-magenta-lightgray colorscheme will be used
 #' 
 #' @param colimage
-#' Color palette to be used for the colvar variable, i.e. the cell density.
-#' If col is NULL (default) and colvar is specified, then a blue-lightblue-white 
-#' colorscheme will be used.
+#' Color palette to be used for the colvar variable, i.e. the SR values.
+#' If colimage is NULL (default) and colvar is specified, then a 
+#' blue-lightblue-white colorscheme will be used.
 #' 
 #' @param colkeypersp
 #' A logical, or a list (default) with parameters for the color 
@@ -57,9 +57,9 @@
 #' shift = 0.15, cex.axis = 0.6, cex.clab = 0.65
 #' The default is to draw the color key on side = 4, i.e. in the right 
 #' margin. 
-#' If colkey = NULL then a color key will be added only if 
-#' col is a vector. Setting colkey = list(plot = FALSE) will create 
-#' room for the color key without drawing it. if colkey = FALSE, 
+#' If colkeypersp = NULL then a color key will be added only if 
+#' col is a vector. Setting colkeypersp = list(plot = FALSE) will create 
+#' room for the color key without drawing it. if colkeypersp = FALSE, 
 #' no color key legend will be added.
 #' See more details in ?plot3D::persp3D
 #' 
@@ -75,15 +75,15 @@
 #' shift = -0.15, cex.axis = 0.6, cex.clab = 0.65
 #' The default is to draw the color key on side = 4, i.e. in the right 
 #' margin. 
-#' If colkey = NULL then a color key will be added only if 
-#' col is a vector. Setting colkey = list(plot = FALSE) will create 
-#' room for the color key without drawing it. if colkey = FALSE, 
+#' If colkeyimage = NULL then a color key will be added only if 
+#' col is a vector. Setting colkeyimage = list(plot = FALSE) will create 
+#' room for the color key without drawing it. if colkeyimage = FALSE, 
 #' no color key legend will be added.
 #' See more details in ?plot3D::image3D
 #' 
 #' @param lighting
-#' If not FALSE the facets will be illuminated, and colors may 
-#' appear more bright
+#' A logical. If TRUE, the facets will be illuminated, and colors may 
+#' appear more bright. Default is FALSE
 #' 
 #' @param lphi
 #' if finite values are specified for lphi, the surface is 
@@ -91,16 +91,17 @@
 #' specified by colatitude lphi
 #' 
 #' @param bty
-#' The type of the box, the default only drawing background panels
+#' The type of the box ("b" or "f"), the default only 
+#' drawing background panels
 #' 
 #' @param PDF
-#' The output format, via pdf file or not, default is TRUE
+#' A logical. Output figure via pdf file or not, default is TRUE
 #' 
 #' @return A pdf file contains the generated figures
 #' 
 #' @details 
 #' Density based visualization tool to generate figures that give the cell 
-#' density distribution against potency states
+#' density distribution against SR value distribution
 #' 
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
@@ -131,7 +132,7 @@
 #' @importFrom DelayedArray isEmpty
 #' @export
 #'  
-Plot_CellSR <- function(Integrataion.l,
+Plot_CellSR <- function(Integration.l,
                         reducedMatrix = NULL,
                         num_dim = 50,
                         max_components = 2,
@@ -150,7 +151,7 @@ Plot_CellSR <- function(Integrataion.l,
 {
     ### Reduce Dimension via tSNE method
     if (reduceDim == TRUE) {
-        irlba_res <- irlba::prcomp_irlba(t(Integrataion.l$expMC), n = num_dim
+        irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC), n = num_dim
                                          , center = TRUE)
         irlba_pca_res <- irlba_res$x
         topDim_pca <- irlba_pca_res
@@ -186,10 +187,10 @@ Plot_CellSR <- function(Integrataion.l,
                           & component2.v[id.1] <= (min(component2.v) + (inc.step2 * j)))
             temp.id <- id.1[id.2]
             if (DelayedArray::isEmpty(temp.id)) {
-                SR_plot[i,j] <- min(Integrataion.l$SR)
+                SR_plot[i,j] <- min(Integration.l$SR)
                 next()
             }
-            SR_plot[i,j] <- max(Integrataion.l$SR[temp.id])
+            SR_plot[i,j] <- max(Integration.l$SR[temp.id])
         }
     }
     

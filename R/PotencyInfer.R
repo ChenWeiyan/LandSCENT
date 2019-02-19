@@ -4,30 +4,22 @@
 #' @aliases PotencyInfer
 #'  
 #' @description 
-#' This function infers the discrete potency states of single cells, 
-#' its distribution across the single cell population, identifies 
+#' This function infers the discrete potency states of single cells and 
+#' its distribution across the single cell population. It also identifies 
 #' potency-coexpression clusters of single cells, called landmarks, 
 #' and finally infers the dependencies of these landmarks which can 
-#' aid in recontructing lineage trajectories in time course scRNA-Seq 
-#' experiments.
+#' aid in recontructing lineage trajectories in time course or development
+#' associated scRNA-Seq experiments.
 #' 
-#' @details 
-#' This function infers the discrete potency states of single cells, 
-#' its distribution across the single cell population, identifies 
-#' potency-coexpression clusters of single cells, called landmarks, 
-#' and finally infers the dependencies of these landmarks which can 
-#' aid in recontructing lineage trajectories in time course scRNA-Seq 
-#' experiments.
-#' 
-#' @param Integrataion.l
+#' @param Integration.l
 #' A list object from \code{CompSRana} function.
 #' 
 #' @param pheno.v
 #' A phenotype vector for the single cells, of same length and order as the 
-#' columns of \code{Integrataion.l$expMC}.
+#' columns of \code{Integration.l$expMC}.
 #' Function can also automatically extract phenotype information
 #' from your original sce/cds data, please store the phenotype information
-#' as name of \code{phenoInfo}
+#' under the name of \code{phenoInfo}
 #' 
 #' @param mixmod
 #' A logical. Default is TRUE.
@@ -36,17 +28,17 @@
 #' In the latter case, use *mixmod=c("E")*.
 #' 
 #' @param maxPS
-#' Maximum number of potency states to allow, when inferring discrete potency 
+#' Maximum number of potency states, when inferring discrete potency 
 #' states of single cells. Default value is 5.
 #' 
 #' @param pctG
-#' Percentage of all genes in \code{Integrataion.l$expMC} to select from
-#' each principal component in an SVD/PCA of \code{Integrataion.l$expMC}.
-#' The union set of all selected genes is then used for clustering. 
-#' Default value is 0.01.
+#' A numeric. Percentage of all genes in \code{Integration.l$expMC} 
+#' to select from each principal component in an SVD/PCA 
+#' of \code{Integration.l$expMC}. The union set of all selected genes 
+#' is then used for clustering. Default value is 0.01.
 #' 
 #' @param kmax
-#' Maximum number of co-expression clusters allowed when performing clustering.
+#' Maximum number of co-expression clusters, when performing clustering.
 #' Default value is 9. Larger values are not allowed.
 #' 
 #' @param reduceMethod 
@@ -57,8 +49,9 @@
 #' Only used when data reduced by tSNE, specify the number of clusters.
 #' 
 #' @param epsMax
-#' Maximum value of scanning when implementing \code{dbscan} to determine
-#' the cluster number.
+#' Maximum value of scanning when data reduced by tSNE, and 
+#' implementing \code{dbscan} to determine the cluster number. 
+#' Default is 10.
 #' 
 #' @param minPts
 #' Number of minimum points in the eps region (for core points).
@@ -74,15 +67,27 @@
 #' Usually, single-cell experiments profile large number of cells, so 0.1 is a 
 #' sensible threshold.
 #' 
+#' @return Integration.l
+#' A list incorporates the input list with a new list named 
+#' \code{potencyInfer.l} and some add-on elements.
+#' 
+#' @return Integration.l$potencyState
+#' Inferred discrete potency states for each single cell. It is indexed so 
+#' that the index increases as the signaling entropy of the state decreases
+#' 
+#' @return Integration.l$distPSPH
+#' If phenotype information provided, it will be a table giving the 
+#' distribution of single-cells across potency states and 
+#' phenotypes
+#' 
 #' @return potencyInfer.l
-#' A list incorporates the input list and a new list \code{potencyInfer.l}
-#' contains sixteen objects:
+#' A list contains sixteen objects:
 #' @return potS
 #' Inferred discrete potency states for each single cell. It is indexed so 
 #' that the index increases as the signaling entropy of the state decreases
 #' @return distPSPH
 #' Table giving the distribution of single-cells across potency states and 
-#' phenotypes
+#' phenotypes(If phenotype information provided)
 #' @return prob
 #' Table giving the probabilities of each potency state per phenotype value
 #' @return hetPS
@@ -111,8 +116,7 @@
 #' cell
 #' @return adj
 #' Weighted adjacency matrix between landmarks with entries giving the number 
-#' of single 
-#' cells mapping closest to the two landmarks
+#' of single cells mapping closest to the two landmarks
 #' @return pcorLM
 #' Partial correlation matrix of landmarks as estimated from the expression 
 #' medoids
@@ -159,11 +163,10 @@
 #' @examples 
 #' data(Example.m)
 #' data(net13Jun12.m)
-#' Integrataion.l <- DoIntegPPI(exp.m = Example.m[, c(1:58,61:84,86:98,100)], ppiA.m = net13Jun12.m)
-#' Integrataion.l <- CompMaxSR(Integrataion.l)
+#' Integration.l <- DoIntegPPI(exp.m = Example.m[, c(1:58,61:84,86:98,100)], ppiA.m = net13Jun12.m)
 #' data(SR.v)
-#' Integrataion.l$SR <- SR.v
-#' potencyInfer.o <- PotencyInfer(Integrataion.l)
+#' Integration.l$SR <- SR.v
+#' potencyInfer.o <- PotencyInfer(Integration.l)
 #' 
 #' @import mclust
 #' @import cluster
@@ -186,7 +189,7 @@
 #' @importFrom stats wilcox.test
 #' @export
 #'     
-PotencyInfer <- function(Integrataion.l,
+PotencyInfer <- function(Integration.l,
                     pheno.v=NULL,
                     mixmod=TRUE,
                     maxPS=5,
@@ -199,25 +202,25 @@ PotencyInfer <- function(Integrataion.l,
                     pctLM=0.05,
                     pcorTH=0.1)
 {
-    if (!is.null(Integrataion.l$data.sce)) {
+    if (!is.null(Integration.l$data.sce)) {
         if (is.null(pheno.v)) {
             pheno.v <- 
-                SingleCellExperiment::colData(Integrataion.l$data.sce)$phenoInfo
+                SingleCellExperiment::colData(Integration.l$data.sce)$phenoInfo
         }
         if (is.null(pheno.v)) {
             warning("No phenotype information, make sure it was stored as name of phenoInfo!")
         }
-    }else if (!is.null(Integrataion.l$data.cds)) {
+    }else if (!is.null(Integration.l$data.cds)) {
         if (is.null(pheno.v)) {
             pheno.v <- 
-                Biobase::pData(Integrataion.l$data.cds)$phenoInfo
+                Biobase::pData(Integration.l$data.cds)$phenoInfo
         }
         if (is.null(pheno.v)) {
             warning("No phenotype information, make sure it was stored as name of phenoInfo!")
         }
     }
-    exp.m <- Integrataion.l$expMC
-    sr.v <- Integrataion.l$SR
+    exp.m <- Integration.l$expMC
+    sr.v <- Integration.l$SR
     
     ### set an integer for gene selection
     ntop <- floor(pctG*nrow(exp.m))
@@ -407,18 +410,18 @@ PotencyInfer <- function(Integrataion.l,
     netLM.m[pcorLM.m < pcorTH] <- 0;
     netLM.m[pcorLM.m > pcorTH] <- 1;    
     
-    if (!is.null(Integrataion.l$data.sce)) {
-        colData(Integrataion.l$data.sce)$potencyState <- ordpotS.v
-    }else if (!is.null(Integrataion.l$data.cds)) {
-        pData(Integrataion.l$data.cds)$potencyState <- ordpotS.v
+    if (!is.null(Integration.l$data.sce)) {
+        colData(Integration.l$data.sce)$potencyState <- ordpotS.v
+    }else if (!is.null(Integration.l$data.cds)) {
+        pData(Integration.l$data.cds)$potencyState <- ordpotS.v
     }
-    Integrataion.l$potencyState <- ordpotS.v
+    Integration.l$potencyState <- ordpotS.v
     
     if (!is.null(pheno.v)) {
-        Integrataion.l$distPSPH <- distPSph.m
+        Integration.l$distPSPH <- distPSph.m
     }
     
-    Integrataion.l$potencyInfer.l <- list(potS=ordpotS.v,distPSPH=distPSph.m,prob=probPSph.m,
+    Integration.l$potencyInfer.l <- list(potS=ordpotS.v,distPSPH=distPSph.m,prob=probPSph.m,
                                           hetPS=hetPS.v,cl=clust.idx,pscl=psclID.v,
                                           distPSCL=distPSCL.m,medLM=medLM.m,srPSCL=srPSCL.v,
                                           srLM=srLM.v,distPHLM=distPHLM.m,cellLM=cellLM.v,
@@ -426,5 +429,5 @@ PotencyInfer <- function(Integrataion.l,
                                           netLM=netLM.m)
     
     
-    return(Integrataion.l)
+    return(Integration.l)
 }

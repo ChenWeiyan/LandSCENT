@@ -4,34 +4,33 @@
 \alias{PotencyInfer}
 \title{Infer Distinct potency states from cells' SR values}
 \usage{
-PotencyInfer(Integrataion.l, pheno.v = NULL, mixmod = TRUE,
-  maxPS = 5, pctG = 0.01, kmax = 9, reduceMethod = "PAM",
-  num_clusters = NULL, epsMax = 10, minPts = 5, pctLM = 0.05,
-  pcorTH = 0.1)
+PotencyInfer(Integration.l, pheno.v = NULL, mixmod = TRUE, maxPS = 5,
+  pctG = 0.01, kmax = 9, reduceMethod = "PAM", num_clusters = NULL,
+  epsMax = 10, minPts = 5, pctLM = 0.05, pcorTH = 0.1)
 }
 \arguments{
-\item{Integrataion.l}{A list object from \code{CompSRana} function.}
+\item{Integration.l}{A list object from \code{CompSRana} function.}
 
 \item{pheno.v}{A phenotype vector for the single cells, of same length and order as the 
-columns of \code{Integrataion.l$expMC}.
+columns of \code{Integration.l$expMC}.
 Function can also automatically extract phenotype information
 from your original sce/cds data, please store the phenotype information
-as name of \code{phenoInfo}}
+under the name of \code{phenoInfo}}
 
 \item{mixmod}{A logical. Default is TRUE.
 Specifies whether the Gaussian mixture model to be fit assumes components 
 to have different (default) or equal variance.
 In the latter case, use *mixmod=c("E")*.}
 
-\item{maxPS}{Maximum number of potency states to allow, when inferring discrete potency 
+\item{maxPS}{Maximum number of potency states, when inferring discrete potency 
 states of single cells. Default value is 5.}
 
-\item{pctG}{Percentage of all genes in \code{Integrataion.l$expMC} to select from
-each principal component in an SVD/PCA of \code{Integrataion.l$expMC}.
-The union set of all selected genes is then used for clustering. 
-Default value is 0.01.}
+\item{pctG}{A numeric. Percentage of all genes in \code{Integration.l$expMC} 
+to select from each principal component in an SVD/PCA 
+of \code{Integration.l$expMC}. The union set of all selected genes 
+is then used for clustering. Default value is 0.01.}
 
-\item{kmax}{Maximum number of co-expression clusters allowed when performing clustering.
+\item{kmax}{Maximum number of co-expression clusters, when performing clustering.
 Default value is 9. Larger values are not allowed.}
 
 \item{reduceMethod}{A character, either "tSNE" or "PAM"(default). Indicates using tSNE or
@@ -39,8 +38,9 @@ PAM method to do dimension reduction.}
 
 \item{num_clusters}{Only used when data reduced by tSNE, specify the number of clusters.}
 
-\item{epsMax}{Maximum value of scanning when implementing \code{dbscan} to determine
-the cluster number.}
+\item{epsMax}{Maximum value of scanning when data reduced by tSNE, and 
+implementing \code{dbscan} to determine the cluster number. 
+Default is 10.}
 
 \item{minPts}{Number of minimum points in the eps region (for core points).
 Default is 5 points.}
@@ -54,9 +54,21 @@ Usually, single-cell experiments profile large number of cells, so 0.1 is a
 sensible threshold.}
 }
 \value{
+Integration.l
+A list incorporates the input list with a new list named 
+\code{potencyInfer.l} and some add-on elements.
+
+Integration.l$potencyState
+Inferred discrete potency states for each single cell. It is indexed so 
+that the index increases as the signaling entropy of the state decreases
+
+Integration.l$distPSPH
+If phenotype information provided, it will be a table giving the 
+distribution of single-cells across potency states and 
+phenotypes
+
 potencyInfer.l
-A list incorporates the input list and a new list \code{potencyInfer.l}
-contains sixteen objects:
+A list contains sixteen objects:
 
 potS
 Inferred discrete potency states for each single cell. It is indexed so 
@@ -64,7 +76,7 @@ that the index increases as the signaling entropy of the state decreases
 
 distPSPH
 Table giving the distribution of single-cells across potency states and 
-phenotypes
+phenotypes(If phenotype information provided)
 
 prob
 Table giving the probabilities of each potency state per phenotype value
@@ -105,8 +117,7 @@ cell
 
 adj
 Weighted adjacency matrix between landmarks with entries giving the number 
-of single 
-cells mapping closest to the two landmarks
+of single cells mapping closest to the two landmarks
 
 pcorLM
 Partial correlation matrix of landmarks as estimated from the expression 
@@ -117,29 +128,20 @@ Adjacency matrix of landmarks specifying which partial correlations are
 significant
 }
 \description{
-This function infers the discrete potency states of single cells, 
-its distribution across the single cell population, identifies 
+This function infers the discrete potency states of single cells and 
+its distribution across the single cell population. It also identifies 
 potency-coexpression clusters of single cells, called landmarks, 
 and finally infers the dependencies of these landmarks which can 
-aid in recontructing lineage trajectories in time course scRNA-Seq 
-experiments.
-}
-\details{
-This function infers the discrete potency states of single cells, 
-its distribution across the single cell population, identifies 
-potency-coexpression clusters of single cells, called landmarks, 
-and finally infers the dependencies of these landmarks which can 
-aid in recontructing lineage trajectories in time course scRNA-Seq 
-experiments.
+aid in recontructing lineage trajectories in time course or development
+associated scRNA-Seq experiments.
 }
 \examples{
 data(Example.m)
 data(net13Jun12.m)
-Integrataion.l <- DoIntegPPI(exp.m = Example.m[, c(1:58,61:84,86:98,100)], ppiA.m = net13Jun12.m)
-Integrataion.l <- CompMaxSR(Integrataion.l)
+Integration.l <- DoIntegPPI(exp.m = Example.m[, c(1:58,61:84,86:98,100)], ppiA.m = net13Jun12.m)
 data(SR.v)
-Integrataion.l$SR <- SR.v
-potencyInfer.o <- PotencyInfer(Integrataion.l)
+Integration.l$SR <- SR.v
+potencyInfer.o <- PotencyInfer(Integration.l)
 
 }
 \references{

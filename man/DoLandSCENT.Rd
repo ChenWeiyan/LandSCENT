@@ -4,25 +4,29 @@
 \alias{DoLandSCENT}
 \title{Runs the LandSCENT algorithm}
 \usage{
-DoLandSCENT(exp.m, ppiA.m, mc.cores = 1, pheno.v = NULL,
-  reducedMatrix = NULL, reduceDim = TRUE, PLOT = TRUE, PDF = TRUE)
+DoLandSCENT(exp.m, ppiA.m, log_trans = FALSE, mc.cores = 1,
+  pheno.v = NULL, reducedMatrix = NULL, reduceDim = TRUE,
+  PLOT = TRUE, PDF = TRUE)
 }
 \arguments{
-\item{exp.m}{Can be three kinds of input.
+\item{exp.m}{Can be three major kinds of input:
 One is a scRNA-Seq data matrix with rows labeling genes and columns 
-labeling single cells, which is not log-transformed (can be FPKM, TPM etc.).
-And rownames must be provided and must be the same with the 
-rownames of \code{ppiA.m}.
-The other kinds of two input can be either a "SingleCellExperiment"
+labeling single cells. And it can be either a log-transformed data
+matrix with minimal value around 0.1 (recommended), or an 
+nonlog-transformed data matrix with minimal value 0.
+The other two kinds of input can be either a "SingleCellExperiment"
 class object or a "CellDataSet" class object}
 
 \item{ppiA.m}{The adjacency matrix of a user-given PPI network with rownames and 
-colnames labeling genes (same gene identifier as in \code{exp.m}).}
+colnames labeling genes (same gene identifier as in \code{exp.m})}
+
+\item{log_trans}{A logical. Whether to do log-transformation on the input data
+matrix or not. Default is FALSE}
 
 \item{mc.cores}{The number of cores to use, i.e. at most how many child processes will 
 be run simultaneously. The option is initialized from environment variable 
-MC_CORES if set. Must be at least one, and parallelization requires at 
-least two cores.}
+MC_CORES if set. Must be at least one (default), and parallelization 
+requires at least two cores.}
 
 \item{pheno.v}{A phenotype vector for the single cells, of same length and order as the 
 columns of \code{exp.m}.
@@ -32,21 +36,20 @@ as name of \code{phenoInfo}.}
 
 \item{reducedMatrix}{The previous reduced dimension matrix, with rows lalabeling cells and two
 colums labeling reduced dimensions.(Optional, only used when 
-\code{reduceDim} set to \code{FALSE})}
+\code{reduceDim} is set to \code{FALSE})}
 
 \item{reduceDim}{A logical, do deminsion reduction or not before generate the plots.
 Default is TRUE.}
 
 \item{PLOT}{A logical. Decides whether to generate (default) the landSR figure 
-and CellSR figure or not.}
+or not.}
 
-\item{PDF}{The figure file output format, via pdf (TRUE) file or not, default is TRUE.}
+\item{PDF}{A logical. Output figure via pdf file or not, default is TRUE}
 }
 \value{
-Integrataion.l
+Integration.l
 A list contains input information and SR values, potency states and more
-other results. Typically, it contains the same values as the output of
-\code{PotencyInfer}.
+other results.
 
 PDF file
 If PDF is TRUE(default), then it will automatically generate a pdf file
