@@ -8,3 +8,9 @@
     \item Added NEWS file.
   }
 }
+
+\section{Version 0.99.1}{
+  \itemize{
+    \item Update functions and vignette.
+  }
+}
