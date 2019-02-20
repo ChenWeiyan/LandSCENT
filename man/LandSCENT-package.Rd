@@ -26,7 +26,7 @@ clusters, which for instance can help identify lineage trajectories in
 time course differentiation experiments.
 }
 \examples{
-### see example for DoLandSCENT function for typical workflow
+### see example for CompSRana function for typical workflow
 
 }
 \references{

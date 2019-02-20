@@ -62,6 +62,6 @@
 #' 10.1038/srep03039}.
 #' 
 #' @examples 
-#' ### see example for DoLandSCENT function for typical workflow
+#' ### see example for CompSRana function for typical workflow
 #' 
 NULL

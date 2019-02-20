@@ -101,6 +101,10 @@
 #' @param PDF
 #' A logical. Output figure via pdf file or not, default is TRUE
 #' 
+#' @return Integration.l
+#' A list contains input information and a dimention reduced matrix
+#' by tSNE
+#' 
 #' @return A pdf file contains the generated figures
 #' 
 #' @details 
@@ -122,7 +126,7 @@
 #' scent.o <- list(potS = potS.v)
 #' potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
 #' 
-#' Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
+#' LandSR.o <- Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
 #' 
 #' @import Rtsne
 #' @import MASS
@@ -175,6 +179,8 @@ Plot_LandSR <- function(Integration.l,
         component1.v <- reducedMatrix[, 1]
         component2.v <- reducedMatrix[, 2]
     }
+    
+    Integration.l$tSNE.m <- reducedMatrix
     
     ### Calculate Cell Density
     CellDensity.o <- MASS::kde2d(x = component1.v,y = component2.v,n = num_grid)
@@ -260,4 +266,6 @@ Plot_LandSR <- function(Integration.l,
             color.id2 <- color.id2 + 2
         }
     }
+    
+    return(Integration.l)
 }

@@ -294,7 +294,13 @@ We provide arguments for you to choose whether to do dimension reduction inside 
 The horizon lines of these density maps decrease from left to right, which indicates the cell potency states decrease from high (PS1) to low (PS3).
 
 ```{r Plot_LandSR , eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
+LandSR.o <- Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
+```
+
+The output list *LandSR.o* will also store the tSNE cluster result for you. you can easily access it with
+
+```{r tSNE matrix , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
+LandSR.o$tSNE.m
 ```
 
 ### `Plot_CellSR` function

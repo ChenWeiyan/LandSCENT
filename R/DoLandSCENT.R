@@ -57,7 +57,7 @@
 #' A list contains input information and SR values, potency states and more
 #' other results.
 #' 
-#' @return PDF file
+#' @return A PDF file
 #' If PDF is TRUE(default), then it will automatically generate a pdf file
 #' ploting cell density against potency states.
 #' 
@@ -97,7 +97,7 @@ DoLandSCENT <- function(exp.m,
     
     ### generate figures
     if (PLOT == TRUE) {
-        Plot_LandSR(Integration.l, reducedMatrix = reducedMatrix, reduceDim = reduceDim, PDF = PDF)
+        Integration.l <- Plot_LandSR(Integration.l, reducedMatrix = reducedMatrix, reduceDim = reduceDim, PDF = PDF)
     }
     
     return(Integration.l)

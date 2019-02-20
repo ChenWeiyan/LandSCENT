@@ -91,6 +91,10 @@ drawing background panels}
 \item{PDF}{A logical. Output figure via pdf file or not, default is TRUE}
 }
 \value{
+Integration.l
+A list contains input information and a dimention reduced matrix
+by tSNE
+
 A pdf file contains the generated figures
 }
 \description{
@@ -108,7 +112,7 @@ data(SR4.v)
 scent.o <- list(potS = potS.v)
 potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
 
-Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
+LandSR.o <- Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
 
 }
 \references{

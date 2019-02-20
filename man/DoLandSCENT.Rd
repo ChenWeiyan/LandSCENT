@@ -51,7 +51,7 @@ Integration.l
 A list contains input information and SR values, potency states and more
 other results.
 
-PDF file
+A PDF file
 If PDF is TRUE(default), then it will automatically generate a pdf file
 ploting cell density against potency states.
 }
