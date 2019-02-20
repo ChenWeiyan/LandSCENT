@@ -20,6 +20,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r vignette-options, echo=FALSE, message=FALSE, warning=FALSE}
+require(BiocStyle)
+```
+
 # Introduction
 
 The main purpose of the `LandSCENT` package is to provide a means of estimating the differentiation potency of single cells without the need to assume prior biological knowledge (e.g. marker expression or timepoint). As such, it may provide a more unbiased means for assessing potency or pseudotime.
