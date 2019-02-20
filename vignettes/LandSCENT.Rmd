@@ -297,7 +297,9 @@ We provide arguments for you to choose whether to do dimension reduction inside 
 The horizon lines of these density maps decrease from left to right, which indicates the cell potency states decrease from high (PS1) to low (PS3).
 
 ```{r Plot_LandSR , eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-LandSR.o <- Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
+LandSR.o <- Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, 
+                        reduceDim = FALSE, colpersp = NULL, 
+                        colimage = NULL, bty = "f", PDF = FALSE)
 ```
 
 The output list *LandSR.o* will store the tSNE cluster result. you can easily access it with
@@ -315,7 +317,9 @@ We also provide arguments for you to choose whether to do dimension reduction in
 **Note** that the input argument *num-grid* is sensitive to the data size, which indicates the number of grid points in each direction. So it should be well asigned bsed on your own dataset. See more details in package help page.
 
 ```{r Plot_CellSR , eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-CellSR.o <- Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, num_grid = 35, theta = 40, colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
+CellSR.o <- Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, 
+                        reduceDim = FALSE, num_grid = 35, theta = 40, 
+                        colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
 ```
 
 The output list *CellSR.o* will also store the tSNE cluster result, in *CellSR.o$tSNE.m*.
@@ -330,7 +334,10 @@ In `LandSCENT`, we provide a function named `DoLandSCENT` for users do not care 
 It takes the scRNA-seq data and network matrix with some control arguments as its inputs. And return a list contains SR values, potency states and other results after running all the necessary functions. You can also control the plot via *PLOT* and *PDF* arguments.
 
 ```{r DoLandSCENT , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-DoLandSCENT.o <- DoLandSCENT(exp.m = Example.m, ppiA.m = net13Jun12.m, mc.cores = 30, pheno.v = NULL, reducedMatrix = NULL, reduceDim = TRUE, PLOT = FALSE, PDF = FALSE)
+DoLandSCENT.o <- DoLandSCENT(exp.m = Example.m, ppiA.m = net13Jun12.m,
+                             mc.cores = 30, pheno.v = NULL, 
+                             reducedMatrix = NULL, reduceDim = TRUE, 
+                             PLOT = FALSE, PDF = FALSE)
 ```
 
 ## Extract objects from function results

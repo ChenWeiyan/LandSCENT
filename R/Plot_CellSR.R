@@ -165,19 +165,23 @@ Plot_CellSR <- function(Integration.l,
 {
     ### Reduce Dimension via tSNE method
     if (reduceDim == TRUE) {
-        sd.v <- apply(Integration.l$expMC, 1, sd)
-        mean.v <- apply(Integration.l$expMC, 1, mean)
-        selG.idx <- intersect(which(mean.v > mean_cutoff),
-                              which(sd.v > sd_cutoff));
-        
-        irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC[selG.idx ,]), 
-                                         n = num_dim, 
-                                         center = TRUE)
-        irlba_pca_res <- irlba_res$x
-        topDim_pca <- irlba_pca_res
-        tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 
-                                 pca = FALSE)
-        reducedMatrix <- tsne_res$Y[, 1:max_components]
+        if (is.null(Integration.l$tSNE.mat)) {
+            sd.v <- apply(Integration.l$expMC, 1, sd)
+            mean.v <- apply(Integration.l$expMC, 1, mean)
+            selG.idx <- intersect(which(mean.v > mean_cutoff),
+                                  which(sd.v > sd_cutoff));
+            
+            irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC[selG.idx ,]), 
+                                             n = num_dim, 
+                                             center = TRUE)
+            irlba_pca_res <- irlba_res$x
+            topDim_pca <- irlba_pca_res
+            tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 
+                                     pca = FALSE)
+            reducedMatrix <- tsne_res$Y[, 1:max_components]
+        }else{
+            reducedMatrix <- Integration.l$tSNE.mat
+        }
         component1.v <- reducedMatrix[, 1]
         component2.v <- reducedMatrix[, 2]
     }else{

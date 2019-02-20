@@ -298,6 +298,7 @@ PotencyInfer <- function(Integration.l,
         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = 2, 
                                  pca = FALSE)
         reducedMatrix <- tsne_res$Y[, 1:2]
+        Integration.l$tSNE.mat <- reducedMatrix
         dbsc.v <- vector()
         eps.v <- vector()
         id.x <- 1
