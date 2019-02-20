@@ -9,7 +9,7 @@ author:
   - UCL Cancer Institute, University College London
   - CAS Key Lab of Computational Biology, PICB, SINH
 date: "`r Sys.Date()`"
-package: "`r pkg_ver('LandSCENT')`"
+package: LandSCENT
 output:
   BiocStyle::html_document:
     toc_float: true
