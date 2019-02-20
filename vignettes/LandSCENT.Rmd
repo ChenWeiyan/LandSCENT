@@ -130,12 +130,12 @@ After quality control, we then move to the normalization part. `r Biocpkg("scate
 sizeFactors(example.sce) <- librarySizeFactors(example.sce)
 ```
 
-Scaling normalization is then used to remove cell-specific biases, e.g. coverage or capture efficiency. Log-transformed normalized expression values can be simply computed with `normalise` function.
+Scaling normalization is then used to remove cell-specific biases, e.g. coverage or capture efficiency. Log-transformed normalized expression values can be simply computed with `normalize` function.
 
-**Importantly**, we need to add an offset value of 1.1 before log-transformation. The offset is added in order to ensure that the minimum value after log-transformation would not be 0, but a nonzero value (typically log~2~1.1 \approx 0.13). We do not want zeroes in our final matrix since the computation of signaling entropy rate involves ratios of gene expression values and zeros in the denominator are undefined.
+**Importantly**, we need to add an offset value of 1.1 before log-transformation. The offset is added in order to ensure that the minimum value after log-transformation would not be 0, but a nonzero value (typically log~2~1.1). We do not want zeroes in our final matrix since the computation of signaling entropy rate involves ratios of gene expression values and zeros in the denominator are undefined.
 
 ```{r normalization, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-example.sce <- normalise(example.sce, log_exprs_offset = 1.1)
+example.sce <- normalize(example.sce, log_exprs_offset = 1.1)
 example.m <- as.matrix(assay(example.sce, i = "logcounts"))
 min(example.m)
 ```
