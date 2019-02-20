@@ -97,7 +97,7 @@
 #' @import Matrix
 #' @import scater
 #' @importFrom BiocGenerics estimateSizeFactors
-#' @importFrom scater normalise
+#' @importFrom scater normalize
 #' @importFrom scater librarySizeFactors
 #' @importFrom igraph graph.adjacency
 #' @importFrom igraph clusters
@@ -116,7 +116,7 @@ DoIntegPPI <- function(exp.m,
     # select log-normalization methods based on data class
     if (data.class == "SingleCellExperiment") {
         sizeFactors(exp.m) <- scater::librarySizeFactors(exp.m)
-        exp.m <- scater::normalise(exp.m, log_exprs_offset = 1.1)
+        exp.m <- scater::normalize(exp.m, log_exprs_offset = 1.1)
         data.m <- Matrix::as.matrix(SummarizedExperiment::assay(exp.m, i = "logcounts"))
     }else if (data.class == "CellDataSet") {
         exp.m <- BiocGenerics::estimateSizeFactors(exp.m)

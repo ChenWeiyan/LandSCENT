@@ -111,14 +111,13 @@ example.sce <- calculateQCMetrics(example.sce, feature_controls=list(Spike=is.sp
 ### Cell Filtering wih isOutlier function
  
 libsize.drop <- isOutlier(example.sce$total_counts, nmads=5, type="lower", log=TRUE);
-feature.drop <- isOutlier(example.sce$total_features, nmads=5, type="lower", log=TRUE);
 mito.drop <- isOutlier(example.sce$pct_counts_Mt, nmads=5, type="higher");
 spike.drop <- isOutlier(example.sce$pct_counts_Spike, nmads=5, type="higher");
  
-filter_example.sce <- example.sce[, !(libsize.drop | feature.drop | mito.drop | spike.drop)]
-phenoExample.v <- phenoExample.v[!(libsize.drop | feature.drop | mito.drop | spike.drop)]
-data.frame(ByLibSize=sum(libsize.drop), ByFeature=sum(feature.drop),
-           ByMito=sum(mito.drop), BySpike=sum(spike.drop), Remaining=ncol(filter_example.sce))
+filter_example.sce <- example.sce[, !(libsize.drop | mito.drop | spike.drop)]
+phenoExample.v <- phenoExample.v[!(libsize.drop | mito.drop | spike.drop)]
+data.frame(ByLibSize=sum(libsize.drop), ByMito=sum(mito.drop), 
+           BySpike=sum(spike.drop), Remaining=ncol(filter_example.sce))
 example.sce <- filter_example.sce
 
 ```
@@ -193,7 +192,7 @@ A typical workflow strats from integration of the scRNA-Seq data with the user-d
 
 ```{r , eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 data(Example.m)
-Example.m <- Example.m[, !(libsize.drop | feature.drop | mito.drop | spike.drop)]
+Example.m <- Example.m[, !(libsize.drop | mito.drop | spike.drop)]
 ```
 
 ```{r integrate scRNA-seq and PPI network, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
