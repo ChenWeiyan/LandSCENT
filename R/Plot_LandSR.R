@@ -28,6 +28,14 @@
 #' @param reduceDim
 #' A logical, do deminsion reduction or not, default is TRUE
 #' 
+#' @param mean_cutoff
+#' Threshold of mean expression level for gene used to perform 
+#' dimension reduction. Default is 1
+#' 
+#' @param sd_cutoff
+#' Threshold of standard deviation for gene used to perform 
+#' dimension reduction. Default is 0.5
+#' 
 #' @param phi
 #' The angles defining the viewing direction. phi gives the colatitude
 #' 
@@ -145,6 +153,8 @@ Plot_LandSR <- function(Integration.l,
                         max_components = 2,
                         num_grid = 50,
                         reduceDim = TRUE,
+                        mean_cutoff = 1,
+                        sd_cutoff = 0.5,
                         phi = 20,
                         theta = 20,
                         colpersp = NULL,
@@ -159,8 +169,14 @@ Plot_LandSR <- function(Integration.l,
 {
     ### Reduce Dimension via tSNE method
     if (reduceDim == TRUE) {
-        irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC), n = num_dim
-                                         , center = TRUE)
+        sd.v <- apply(Integration.l$expMC, 1, sd)
+        mean.v <- apply(Integration.l$expMC, 1, mean)
+        selG.idx <- intersect(which(mean.v > mean_cutoff),
+                              which(sd.v > sd_cutoff));
+        
+        irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC[selG.idx ,]), 
+                                         n = num_dim, 
+                                         center = TRUE)
         irlba_pca_res <- irlba_res$x
         topDim_pca <- irlba_pca_res
         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 

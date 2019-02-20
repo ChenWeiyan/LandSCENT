@@ -28,6 +28,14 @@
 #' @param reduceDim
 #' A logical, do deminsion reduction or not, default is TRUE
 #' 
+#' @param mean_cutoff
+#' Threshold of mean expression level for gene used to perform 
+#' dimension reduction. Default is 1
+#' 
+#' @param sd_cutoff
+#' Threshold of standard deviation for gene used to perform 
+#' dimension reduction. Default is 0.5
+#' 
 #' @param phi
 #' The angles defining the viewing direction. phi gives the colatitude
 #' 
@@ -97,6 +105,10 @@
 #' @param PDF
 #' A logical. Output figure via pdf file or not, default is TRUE
 #' 
+#' @return Integration.l
+#' A list contains input information and a dimention reduced matrix
+#' by tSNE
+#' 
 #' @return A pdf file contains the generated figures
 #' 
 #' @details 
@@ -118,7 +130,7 @@
 #' scent.o <- list(potS = potS.v)
 #' potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
 #' 
-#' Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
+#' CellSR.o <- Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
 #' 
 #' @import Rtsne
 #' @import MASS
@@ -138,6 +150,8 @@ Plot_CellSR <- function(Integration.l,
                         max_components = 2,
                         num_grid = 50,
                         reduceDim = TRUE,
+                        mean_cutoff = 1,
+                        sd_cutoff = 0.5,
                         phi = 20,
                         theta = 20,
                         colpersp = NULL,
@@ -151,8 +165,14 @@ Plot_CellSR <- function(Integration.l,
 {
     ### Reduce Dimension via tSNE method
     if (reduceDim == TRUE) {
-        irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC), n = num_dim
-                                         , center = TRUE)
+        sd.v <- apply(Integration.l$expMC, 1, sd)
+        mean.v <- apply(Integration.l$expMC, 1, mean)
+        selG.idx <- intersect(which(mean.v > mean_cutoff),
+                              which(sd.v > sd_cutoff));
+        
+        irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC[selG.idx ,]), 
+                                         n = num_dim, 
+                                         center = TRUE)
         irlba_pca_res <- irlba_res$x
         topDim_pca <- irlba_pca_res
         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 
@@ -171,6 +191,8 @@ Plot_CellSR <- function(Integration.l,
         component1.v <- reducedMatrix[, 1]
         component2.v <- reducedMatrix[, 2]
     }
+    
+    Integration.l$tSNE.m <- reducedMatrix
     
     ### Calculate Cell Density
     CellDensity.o <- MASS::kde2d(x = component1.v,y = component2.v,n = num_grid)
@@ -228,4 +250,6 @@ Plot_CellSR <- function(Integration.l,
         image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(CellDensity.o$z), xlim = xlim.v, ylim = ylim.v,
                 colvar = SR_plot, col = colimage, colkey = colkeyimage, clab = c("","Potency","SR"), add = TRUE, plot = TRUE)
     }
+    
+    return(Integration.l)
 }

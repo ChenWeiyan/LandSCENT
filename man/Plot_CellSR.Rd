@@ -5,12 +5,13 @@
 \title{Plot Cell density with SR values}
 \usage{
 Plot_CellSR(Integration.l, reducedMatrix = NULL, num_dim = 50,
-  max_components = 2, num_grid = 50, reduceDim = TRUE, phi = 20,
-  theta = 20, colpersp = NULL, colimage = NULL,
-  colkeypersp = list(length = 0.2, width = 0.4, shift = 0.2, cex.axis =
-  0.6, cex.clab = 0.7), colkeyimage = list(length = 0.2, width = 0.4,
-  shift = -0.2, cex.axis = 0.6, cex.clab = 0.7), lighting = FALSE,
-  lphi = 90, bty = "b", PDF = TRUE)
+  max_components = 2, num_grid = 50, reduceDim = TRUE,
+  mean_cutoff = 1, sd_cutoff = 0.5, phi = 20, theta = 20,
+  colpersp = NULL, colimage = NULL, colkeypersp = list(length = 0.2,
+  width = 0.4, shift = 0.2, cex.axis = 0.6, cex.clab = 0.7),
+  colkeyimage = list(length = 0.2, width = 0.4, shift = -0.2, cex.axis =
+  0.6, cex.clab = 0.7), lighting = FALSE, lphi = 90, bty = "b",
+  PDF = TRUE)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{PotencyInfer} function}
@@ -27,6 +28,12 @@ set to be FALSE}
 integer vector}
 
 \item{reduceDim}{A logical, do deminsion reduction or not, default is TRUE}
+
+\item{mean_cutoff}{Threshold of mean expression level for gene used to perform 
+dimension reduction. Default is 1}
+
+\item{sd_cutoff}{Threshold of standard deviation for gene used to perform 
+dimension reduction. Default is 0.5}
 
 \item{phi}{The angles defining the viewing direction. phi gives the colatitude}
 
@@ -88,6 +95,10 @@ drawing background panels}
 \item{PDF}{A logical. Output figure via pdf file or not, default is TRUE}
 }
 \value{
+Integration.l
+A list contains input information and a dimention reduced matrix
+by tSNE
+
 A pdf file contains the generated figures
 }
 \description{
@@ -105,7 +116,7 @@ data(SR4.v)
 scent.o <- list(potS = potS.v)
 potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
 
-Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
+CellSR.o <- Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
 
 }
 \references{

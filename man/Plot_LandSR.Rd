@@ -5,12 +5,13 @@
 \title{Plot Landscape with potency states}
 \usage{
 Plot_LandSR(Integration.l, reducedMatrix = NULL, num_dim = 50,
-  max_components = 2, num_grid = 50, reduceDim = TRUE, phi = 20,
-  theta = 20, colpersp = NULL, colimage = NULL,
-  colkeypersp = list(length = 0.2, width = 0.4, shift = 0.15, cex.axis =
-  0.6, cex.clab = 0.65), colkeyimage = list(length = 0.2, width = 0.4,
-  shift = -0.15, cex.axis = 0.6, cex.clab = 0.65), lighting = FALSE,
-  lphi = 90, bty = "b", scale_z = TRUE, PDF = TRUE)
+  max_components = 2, num_grid = 50, reduceDim = TRUE,
+  mean_cutoff = 1, sd_cutoff = 0.5, phi = 20, theta = 20,
+  colpersp = NULL, colimage = NULL, colkeypersp = list(length = 0.2,
+  width = 0.4, shift = 0.15, cex.axis = 0.6, cex.clab = 0.65),
+  colkeyimage = list(length = 0.2, width = 0.4, shift = -0.15, cex.axis =
+  0.6, cex.clab = 0.65), lighting = FALSE, lphi = 90, bty = "b",
+  scale_z = TRUE, PDF = TRUE)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{PotencyInfer} function}
@@ -27,6 +28,12 @@ set to be FALSE}
 integer vector}
 
 \item{reduceDim}{A logical, do deminsion reduction or not, default is TRUE}
+
+\item{mean_cutoff}{Threshold of mean expression level for gene used to perform 
+dimension reduction. Default is 1}
+
+\item{sd_cutoff}{Threshold of standard deviation for gene used to perform 
+dimension reduction. Default is 0.5}
 
 \item{phi}{The angles defining the viewing direction. phi gives the colatitude}
 

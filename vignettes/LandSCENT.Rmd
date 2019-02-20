@@ -297,7 +297,7 @@ The horizon lines of these density maps decrease from left to right, which indic
 LandSR.o <- Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
 ```
 
-The output list *LandSR.o* will also store the tSNE cluster result for you. you can easily access it with
+The output list *LandSR.o* will store the tSNE cluster result for you. you can easily access it with
 
 ```{r tSNE matrix , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 LandSR.o$tSNE.m
@@ -312,8 +312,14 @@ We also provide arguments for you to choose whether to do dimension reduction in
 **Note** that the input argument *num-grid* is sensitive to the data size, which indicates the number of grid points in each direction. So it should be well asigned bsed on your own dataset. See more details in package help page.
 
 ```{r Plot_CellSR , eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, num_grid = 35, theta = 40, colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
+CellSR.o <- Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, num_grid = 35, theta = 40, colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
 ```
+
+The output list *CellSR.o* will also store the tSNE cluster result for you, in *CellSR.o$tSNE.m*.
+
+### One Note for these two plot functions
+
+We provide two control arguments named *mean_cutoff* and *sd_cutoff* in these two plot functions. They are for you to choose genes that need to be used for dimention reduction inside the functions. You should set these two arguments based on your own dataset. The default values for them are 1 and 0.5, respectively.
 
 ## A "pipeline" function for easy use
 
