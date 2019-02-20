@@ -187,7 +187,7 @@ Plot_CellSR <- function(Integration.l,
                           & component2.v[id.1] <= (min(component2.v) + (inc.step2 * j)))
             temp.id <- id.1[id.2]
             if (DelayedArray::isEmpty(temp.id)) {
-                SR_plot[i,j] <- min(Integration.l$SR)
+                SR_plot[i,j] <- min(Integration.l$SR) * 0.85
                 next()
             }
             SR_plot[i,j] <- max(Integration.l$SR[temp.id])
@@ -199,7 +199,7 @@ Plot_CellSR <- function(Integration.l,
         colpersp <- maPalette(low="white",mid="magenta",high="red", k=10)
     }
     if (is.null(colimage)) {
-        colimage <- maPalette(low="gray",mid="lightblue",high="blue", k=10)
+        colimage <- maPalette(low="gray",mid="lightblue",high="blue", k=15)
     }
     
     ### Output via PDF or not
