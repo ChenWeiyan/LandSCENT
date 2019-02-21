@@ -232,6 +232,15 @@ Plot_LandSR <- function(Integration.l,
         color.id1 <- 1
         color.id2 <- 2
         for (i in 0 : (idx.p - 1)) {
+            
+            if (i == 0) {
+                panel.text <- "High potency state"
+            }else if (i == (idx.p - 1)) {
+                panel.text <- "Low potency state"
+            }else{
+                panel.text <- "Intermediate potency state"
+            }
+            
             potency.o <- MASS::kde2d(x = component1.v[potency_state.v == (idx.p - i)],
                                      y = component2.v[potency_state.v == (idx.p - i)],
                                      n = 2*num_grid)
@@ -243,15 +252,15 @@ Plot_LandSR <- function(Integration.l,
             
             if (is.null(colpersp)) {
                 persp3D(x = potency.o$x, y = potency.o$y, z = (potency.o$z + (max(potency.o$z) * 0.5)) - (max(potency.o$z) * (0.2 * i)), 
-                        xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
+                        main = panel.text, xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
                         phi = phi, theta = theta, col = maPalette(low="lightgray", mid=colorpersp.v[color.id2], high=colorpersp.v[color.id1], k=10), 
                         colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density",paste0("PS", (i+1))), bty = bty, plot = TRUE, xlab="tSNE1",ylab="tSNE2")
             }else{
                 persp3D(x = potency.o$x, y = potency.o$y, z = (potency.o$z + (max(potency.o$z) * 0.5)) - (max(potency.o$z) * (0.2 * i)), 
-                        xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
+                        main = panel.text, xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
                         phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density",paste0("PS", (i+1))), bty = bty, plot = TRUE, xlab="tSNE1",ylab="tSNE2")
             }
-            image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(potency.o$z), xlim = xlim.v, ylim = ylim.v,
+            image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(potency.o$z), main = panel.text, xlim = xlim.v, ylim = ylim.v,
                     colvar = CellDensity.o$z, col = colimage, colkey = colkeyimage, clab = c("","Cell Density","All"), add = TRUE, plot = TRUE)
             color.id1 <- color.id1 + 2
             color.id2 <- color.id2 + 2
@@ -262,6 +271,15 @@ Plot_LandSR <- function(Integration.l,
         color.id1 <- 1
         color.id2 <- 2
         for (i in 0 : (idx.p - 1)) {
+            
+            if (i == 0) {
+                panel.text <- "High potency state"
+            }else if (i == (idx.p - 1)) {
+                panel.text <- "Low potency state"
+            }else{
+                panel.text <- "Intermediate potency state"
+            }
+            
             potency.o <- MASS::kde2d(x = component1.v[potency_state.v == (idx.p - i)],
                                      y = component2.v[potency_state.v == (idx.p - i)],
                                      n = 2*num_grid)
@@ -272,15 +290,15 @@ Plot_LandSR <- function(Integration.l,
             ylim.v <- c(min(range(CellDensity.o$y), range(potency.o$y)), max(range(CellDensity.o$y), range(potency.o$y)))
             if (is.null(colpersp)) {
                 persp3D(x = potency.o$x, y = potency.o$y, z = (potency.o$z + (max(potency.o$z) * 0.5)) - (max(potency.o$z) * (0.2 * i)), 
-                        xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
+                        main = panel.text, xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
                         phi = phi, theta = theta, col = maPalette(low="lightgray", mid=colorpersp.v[color.id2], high=colorpersp.v[color.id1], k=10), 
                         colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density",paste0("PS", (i+1))), bty = bty, plot = TRUE, xlab="tSNE1",ylab="tSNE2")
             }else{
                 persp3D(x = potency.o$x, y = potency.o$y, z = (potency.o$z + (max(potency.o$z) * 0.5)) - (max(potency.o$z) * (0.2 * i)), 
-                        xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
+                        main = panel.text, xlim = xlim.v, ylim = ylim.v, zlim=c(-max(potency.o$z),max(potency.o$z)),
                         phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density",paste0("PS", (i+1))), bty = bty, plot = TRUE, xlab="tSNE1",ylab="tSNE2")
             }
-            image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(potency.o$z), xlim = xlim.v, ylim = ylim.v,
+            image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(potency.o$z), main = panel.text, xlim = xlim.v, ylim = ylim.v,
                     colvar = CellDensity.o$z, col = colimage, colkey = colkeyimage, clab = c("","Cell Density","All"), add = TRUE, plot = TRUE)
             color.id1 <- color.id1 + 2
             color.id2 <- color.id2 + 2
