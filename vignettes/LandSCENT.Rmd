@@ -234,7 +234,7 @@ SR.o <- Integration.l
 ```
 
 ```{r boxplot, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-boxplot(SR.o$SR ~ phenoExample.v)
+boxplot(SR.o$SR ~ phenoExample.v, main = "SR values against cell types", xlab = "Cell Types", ylab = "SR values")
 ```
 
 Here *hESC* and *EC* refer to human embryonic stem cells and mesoderm progenitor cells, respectively.
