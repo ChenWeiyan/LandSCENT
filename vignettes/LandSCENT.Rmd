@@ -281,6 +281,7 @@ One important feature of `LandSCENT` package is that it can also be applied on b
 data(tsne.o)
 data(potS.v)
 data(SR4.v)
+potS.v <- 4 - potS.v
 scent.o <- list(potS = potS.v)
 potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
 library(marray)

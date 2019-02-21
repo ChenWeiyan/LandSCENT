@@ -241,8 +241,8 @@ Plot_LandSR <- function(Integration.l,
                 panel.text <- "Intermediate potency state"
             }
             
-            potency.o <- MASS::kde2d(x = component1.v[potency_state.v == (idx.p - i)],
-                                     y = component2.v[potency_state.v == (idx.p - i)],
+            potency.o <- MASS::kde2d(x = component1.v[potency_state.v == (i + 1)],
+                                     y = component2.v[potency_state.v == (i + 1)],
                                      n = 2*num_grid)
             if (scale_z == TRUE) {
                 potency.o$z <- potency.o$z/max(potency.o$z)
@@ -280,8 +280,8 @@ Plot_LandSR <- function(Integration.l,
                 panel.text <- "Intermediate potency state"
             }
             
-            potency.o <- MASS::kde2d(x = component1.v[potency_state.v == (idx.p - i)],
-                                     y = component2.v[potency_state.v == (idx.p - i)],
+            potency.o <- MASS::kde2d(x = component1.v[potency_state.v == (i + 1)],
+                                     y = component2.v[potency_state.v == (i + 1)],
                                      n = 2*num_grid)
             if (scale_z == TRUE) {
                 potency.o$z <- potency.o$z/max(potency.o$z)
