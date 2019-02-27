@@ -14,3 +14,9 @@
     \item Update functions and vignette.
   }
 }
+
+\section{Version 0.99.2}{
+  \itemize{
+    \item Create functions and update vignette.
+  }
+}
