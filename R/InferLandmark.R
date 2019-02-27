@@ -238,6 +238,7 @@ InferLandmark <- function(Integration.l,
         print("Identifying co-expression clusters via dbscan")
         dbsc.o <- dbscan::dbscan(coordinates, eps = eps_dbscan, minPts = minPts_dbscan)
         clust.idx <- dbsc.o$cluster
+        names(clust.idx) <- colnames(Integration.l$expMC)
         k.opt <- length(unique(as.factor(dbsc.o$cluster)))
         print(paste("Inferred ",k.opt," clusters",sep=""))
         psclID.v <- paste("PS",ordpotS.v,"-CL",clust.idx,sep="")

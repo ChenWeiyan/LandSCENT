@@ -237,7 +237,7 @@ SR.o <- Integration.l
 boxplot(SR.o$SR ~ phenoExample.v, main = "SR values against cell types", xlab = "Cell Types", ylab = "SR values")
 ```
 
-![Fig1. SR Boxplot](SR_boxplot.jpg)
+![](SR_boxplot.jpg)
 
 Here *hESC* and *EC* refer to human embryonic stem cells and mesoderm progenitor cells, respectively.
 
@@ -334,7 +334,7 @@ LandSR.o <- Plot_LandSR(InferLandmark.o, coordinates = tsne.o, colpersp = NULL,
                         colimage = NULL, bty = "f", PDF = FALSE)
 ```
 
-![Fig2. PotencyComparison Plot](PotencyComparison.jpg)
+![](PotencyComparison.jpg)
 
 The output list *LandSR.o* will store the input coordinates as an element, in *LandSR.o$coordinates*. you can easily access it with
 
@@ -358,7 +358,7 @@ CellSR.o <- Plot_CellSR(InferLandmark.o, coordinates = tsne.o,
                         colimage = NULL, bty = "f", PDF = FALSE)
 ```
 
-![Fig3. CellDensitySR Plot](CellDensitySR.jpg)
+![](CellDensitySR.jpg)
 
 The output list *CellSR.o* will also store the input coordinates as an element, in *CellSR.o$coordinates*.
 
