@@ -5,8 +5,7 @@
 \title{Runs the LandSCENT algorithm}
 \usage{
 DoLandSCENT(exp.m, ppiA.m, log_trans = FALSE, mc.cores = 1,
-  pheno.v = NULL, reducedMatrix = NULL, reduceDim = TRUE,
-  PLOT = TRUE, PDF = TRUE)
+  pheno.v = NULL, coordinates = NULL, PLOT = TRUE, PDF = TRUE)
 }
 \arguments{
 \item{exp.m}{Can be three major kinds of input:
@@ -34,12 +33,8 @@ Function can also automatically extract phenotype information
 from your original sce/cds data, please store the phenotype information
 as name of \code{phenoInfo}.}
 
-\item{reducedMatrix}{The previous reduced dimension matrix, with rows lalabeling cells and two
-colums labeling reduced dimensions.(Optional, only used when 
-\code{reduceDim} is set to \code{FALSE})}
-
-\item{reduceDim}{A logical, do deminsion reduction or not before generate the plots.
-Default is TRUE.}
+\item{coordinates}{Optional. The previous reduced dimension coordinates, with rows lalabeling cells 
+and two colums labeling reduced dimensions}
 
 \item{PLOT}{A logical. Decides whether to generate (default) the landSR figure 
 or not.}

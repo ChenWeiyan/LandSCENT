@@ -8,33 +8,15 @@
 #' density distribution with SR value distribution
 #' 
 #' @param Integration.l
-#' Typically, it is the output from \code{PotencyInfer} function
+#' Typically, it is the output from \code{InferLandmark} function
 #' 
-#' @param reducedMatrix
-#' The previous reduced dimension matrix, with rows lalabeling cells and two
-#' colums labeling reduced dimensions. Only used when \code{reduceDim} is 
-#' set to be FALSE
-#' 
-#' @param num_dim
-#' number of dimension used for PCA
-#' 
-#' @param max_components
-#' The dimensionality of the reduced space
+#' @param coordinates
+#' Optional. The previous reduced dimension coordinates, with rows lalabeling cells 
+#' and two colums labeling reduced dimensions
 #' 
 #' @param num_grid
 #' Number of grid points in each direction. Can be scalar or a length-2 
 #' integer vector
-#' 
-#' @param reduceDim
-#' A logical, do deminsion reduction or not, default is TRUE
-#' 
-#' @param mean_cutoff
-#' Threshold of mean expression level for gene used to perform 
-#' dimension reduction. Default is 1
-#' 
-#' @param sd_cutoff
-#' Threshold of standard deviation for gene used to perform 
-#' dimension reduction. Default is 0.5
 #' 
 #' @param phi
 #' The angles defining the viewing direction. phi gives the colatitude
@@ -99,17 +81,17 @@
 #' specified by colatitude lphi
 #' 
 #' @param bty
-#' The type of the box ("b" or "f"), the default only 
+#' The type of the box ("b" or "f"), the default ("b") only 
 #' drawing background panels
 #' 
 #' @param PDF
 #' A logical. Output figure via pdf file or not, default is TRUE
 #' 
-#' @return Integration.l
-#' A list contains input information and a dimention reduced matrix
-#' by tSNE
-#' 
 #' @return A pdf file contains the generated figures
+#' 
+#' @return Integration.l
+#' If coordinates provided, it will be a list object integrates the input
+#' list and coordinates
 #' 
 #' @details 
 #' Density based visualization tool to generate figures that give the cell 
@@ -127,10 +109,10 @@
 #' data(tsne.o)
 #' data(potS.v)
 #' data(SR4.v)
-#' scent.o <- list(potS = potS.v)
-#' potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
+#' potS.v <- 4 - potS.v
+#' InferLandmark.o <- list(potencyState = potS.v, SR = SR4.v, coordinates = tsne.o)
 #' 
-#' CellSR.o <- Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, reduceDim = FALSE, PDF = FALSE)
+#' CellSR.o <- Plot_CellSR(InferLandmark.o, PDF = FALSE)
 #' 
 #' @import Rtsne
 #' @import MASS
@@ -145,13 +127,8 @@
 #' @export
 #'  
 Plot_CellSR <- function(Integration.l,
-                        reducedMatrix = NULL,
-                        num_dim = 50,
-                        max_components = 2,
+                        coordinates = NULL,
                         num_grid = 50,
-                        reduceDim = TRUE,
-                        mean_cutoff = 1,
-                        sd_cutoff = 0.5,
                         phi = 20,
                         theta = 20,
                         colpersp = NULL,
@@ -164,39 +141,47 @@ Plot_CellSR <- function(Integration.l,
                         PDF = TRUE)
 {
     ### Reduce Dimension via tSNE method
-    if (reduceDim == TRUE) {
-        if (is.null(Integration.l$tSNE.mat)) {
-            sd.v <- apply(Integration.l$expMC, 1, sd)
-            mean.v <- apply(Integration.l$expMC, 1, mean)
-            selG.idx <- intersect(which(mean.v > mean_cutoff),
-                                  which(sd.v > sd_cutoff));
-            
-            irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC[selG.idx ,]), 
-                                             n = num_dim, 
-                                             center = TRUE)
-            irlba_pca_res <- irlba_res$x
-            topDim_pca <- irlba_pca_res
-            tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 
-                                     pca = FALSE)
-            reducedMatrix <- tsne_res$Y[, 1:max_components]
-        }else{
-            reducedMatrix <- Integration.l$tSNE.mat
-        }
-        component1.v <- reducedMatrix[, 1]
-        component2.v <- reducedMatrix[, 2]
-    }else{
-        if (is.null(reducedMatrix)) {
-            stop("Please input reduced dimension matrix of first two components!")
-        }
-        temp <- dim(reducedMatrix)
-        if (temp[1] < temp[2]) {
-            reducedMatrix <- t(reducedMatrix)
-        }
-        component1.v <- reducedMatrix[, 1]
-        component2.v <- reducedMatrix[, 2]
-    }
+    # if (reduceDim == TRUE) {
+    #     if (is.null(Integration.l$tSNE.mat)) {
+    #         sd.v <- apply(Integration.l$expMC, 1, sd)
+    #         mean.v <- apply(Integration.l$expMC, 1, mean)
+    #         selG.idx <- intersect(which(mean.v > mean_cutoff),
+    #                               which(sd.v > sd_cutoff));
+    #         
+    #         irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC[selG.idx ,]), 
+    #                                          n = num_dim, 
+    #                                          center = TRUE)
+    #         irlba_pca_res <- irlba_res$x
+    #         topDim_pca <- irlba_pca_res
+    #         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 
+    #                                  pca = FALSE)
+    #         coordinates <- tsne_res$Y[, 1:max_components]
+    #     }else{
+    #         coordinates <- Integration.l$tSNE.mat
+    #     }
+    #     component1.v <- coordinates[, 1]
+    #     component2.v <- coordinates[, 2]
+    # }else{
+    #     if (is.null(coordinates)) {
+    #         stop("Please input reduced dimension matrix of first two components!")
+    #     }
+    #     temp <- dim(coordinates)
+    #     if (temp[1] < temp[2]) {
+    #         coordinates <- t(coordinates)
+    #     }
+    #     component1.v <- coordinates[, 1]
+    #     component2.v <- coordinates[, 2]
+    # }
+    # 
+    # Integration.l$tSNE.m <- coordinates
     
-    Integration.l$tSNE.m <- reducedMatrix
+    ### Get inherent reduced coordinates or input coordinates
+    if (is.null(coordinates)) {
+        coordinates <- Integration.l$coordinates
+    }
+    component1.v <- coordinates[, 1]
+    component2.v <- coordinates[, 2]
+    Integration.l$coordinates <- coordinates
     
     ### Calculate Cell Density
     CellDensity.o <- MASS::kde2d(x = component1.v,y = component2.v,n = num_grid)
@@ -237,7 +222,7 @@ Plot_CellSR <- function(Integration.l,
         CellDensity.o$z <- CellDensity.o$z/max(CellDensity.o$z)
         
         persp3D(x = CellDensity.o$x, y = CellDensity.o$y, z = CellDensity.o$z, xlim = xlim.v, ylim = ylim.v, zlim=c(-max(CellDensity.o$z), max(CellDensity.o$z)),
-                phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density", "All"), bty = bty, plot = TRUE, xlab="tSNE1",ylab="tSNE2")
+                phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density", "All"), bty = bty, plot = TRUE, xlab="component 1",ylab="component 2")
         
         image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(CellDensity.o$z), xlim = xlim.v, ylim = ylim.v,
                 colvar = SR_plot, col = colimage, colkey = colkeyimage, clab = c("","Potency","SR"), add = TRUE, plot = TRUE)
@@ -249,7 +234,7 @@ Plot_CellSR <- function(Integration.l,
         CellDensity.o$z <- CellDensity.o$z/max(CellDensity.o$z)
         
         persp3D(x = CellDensity.o$x, y = CellDensity.o$y, z = CellDensity.o$z, xlim = xlim.v, ylim = ylim.v, zlim=c(-max(CellDensity.o$z), max(CellDensity.o$z)),
-                phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density", "All"), bty = bty, plot = TRUE, xlab="tSNE1",ylab="tSNE2")
+                phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density", "All"), bty = bty, plot = TRUE, xlab="component 1",ylab="component 2")
         
         image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(CellDensity.o$z), xlim = xlim.v, ylim = ylim.v,
                 colvar = SR_plot, col = colimage, colkey = colkeyimage, clab = c("","Potency","SR"), add = TRUE, plot = TRUE)

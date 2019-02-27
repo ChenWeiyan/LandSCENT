@@ -1,35 +1,23 @@
 #' @title 
-#' Infer Distinct potency states from cells' SR values
+#' Infer co-expression landmarks from cells' SR values
 #' 
-#' @aliases PotencyInfer
+#' @aliases InferLandmark
 #'  
 #' @description 
-#' This function infers the discrete potency states of single cells and 
-#' its distribution across the single cell population. It also identifies 
-#' potency-coexpression clusters of single cells, called landmarks, 
-#' and finally infers the dependencies of these landmarks which can 
-#' aid in recontructing lineage trajectories in time course or development
-#' associated scRNA-Seq experiments.
+#' This function identifies potency-coexpression clusters of single cells, 
+#' called landmarks, and finally infers the dependencies of these landmarks 
+#' which can aid in recontructing lineage trajectories in time course 
+#' or development associated scRNA-Seq experiments.
 #' 
 #' @param Integration.l
-#' A list object from \code{CompSRana} function.
+#' A list object from \code{InferPotency} function.
 #' 
 #' @param pheno.v
 #' A phenotype vector for the single cells, of same length and order as the 
 #' columns of \code{Integration.l$expMC}.
 #' Function can also automatically extract phenotype information
 #' from your original sce/cds data, please store the phenotype information
-#' under the name of \code{phenoInfo}
-#' 
-#' @param mixmod
-#' A logical. Default is TRUE.
-#' Specifies whether the Gaussian mixture model to be fit assumes components 
-#' to have different (default) or equal variance.
-#' In the latter case, use *mixmod=c("E")*.
-#' 
-#' @param maxPS
-#' Maximum number of potency states, when inferring discrete potency 
-#' states of single cells. Default value is 5.
+#' under the name of \code{phenoInfo}.
 #' 
 #' @param pctG
 #' A numeric. Percentage of all genes in \code{Integration.l$expMC} 
@@ -37,23 +25,25 @@
 #' of \code{Integration.l$expMC}. The union set of all selected genes 
 #' is then used for clustering. Default value is 0.01.
 #' 
-#' @param kmax
+#' @param reduceMethod
+#' A character, either "PCA" or "tSNE". Indicates using PCA or
+#' tSNE method to do dimension reduction.
+#' 
+#' @param clusterMethod 
+#' A character, either "PAM" or "dbscan". Indicates using dbscan or
+#' PAM method to do clustering.
+#' 
+#' @param k_pam
+#' Only used when \code{clusterMethod} is set to be "PAM".
 #' Maximum number of co-expression clusters, when performing clustering.
-#' Default value is 9. Larger values are not allowed.
+#' Default value is 9.
 #' 
-#' @param reduceMethod 
-#' A character, either "tSNE" or "PAM"(default). Indicates using tSNE or
-#' PAM method to do dimension reduction.
+#' @param eps_dbscan
+#' Only used when \code{clusterMethod} is set to be "dbscan". 
+#' Size of the epsilon neighborhood. Default is 10.
 #' 
-#' @param num_clusters
-#' Only used when data reduced by tSNE, specify the number of clusters.
-#' 
-#' @param epsMax
-#' Maximum value of scanning when data reduced by tSNE, and 
-#' implementing \code{dbscan} to determine the cluster number. 
-#' Default is 10.
-#' 
-#' @param minPts
+#' @param minPts_dbscan
+#' Only used when \code{clusterMethod} is set to be "dbscan".
 #' Number of minimum points in the eps region (for core points).
 #' Default is 5 points.
 #' 
@@ -69,29 +59,10 @@
 #' 
 #' @return Integration.l
 #' A list incorporates the input list with a new list named 
-#' \code{potencyInfer.l} and some add-on elements.
+#' \code{InferLandmark.l}.
 #' 
-#' @return Integration.l$potencyState
-#' Inferred discrete potency states for each single cell. It is indexed so 
-#' that the index increases as the signaling entropy of the state decreases
-#' 
-#' @return Integration.l$distPSPH
-#' If phenotype information provided, it will be a table giving the 
-#' distribution of single-cells across potency states and 
-#' phenotypes
-#' 
-#' @return potencyInfer.l
-#' A list contains sixteen objects:
-#' @return potS
-#' Inferred discrete potency states for each single cell. It is indexed so 
-#' that the index increases as the signaling entropy of the state decreases
-#' @return distPSPH
-#' Table giving the distribution of single-cells across potency states and 
-#' phenotypes(If phenotype information provided)
-#' @return prob
-#' Table giving the probabilities of each potency state per phenotype value
-#' @return hetPS
-#' The normalised Shannon Index of potency per phenotype value
+#' @return InferLandmark.l
+#' A list contains twelve objects:
 #' @return cl
 #' The co-expression clustering index for each single cell
 #' @return pscl
@@ -166,7 +137,8 @@
 #' Integration.l <- DoIntegPPI(exp.m = Example.m[, c(1:58,61:84,86:98,100)], ppiA.m = net13Jun12.m)
 #' data(SR.v)
 #' Integration.l$SR <- SR.v
-#' potencyInfer.o <- PotencyInfer(Integration.l)
+#' InferPotency.o <- InferPotency(Integration.l)
+#' InferLandmark.o <- InferLandmark(InferPotency.o)
 #' 
 #' @import mclust
 #' @import cluster
@@ -189,19 +161,20 @@
 #' @importFrom stats wilcox.test
 #' @export
 #'     
-PotencyInfer <- function(Integration.l,
-                    pheno.v=NULL,
-                    mixmod=TRUE,
-                    maxPS=5,
-                    pctG=0.01,
-                    kmax=9,
-                    reduceMethod = "PAM",
-                    num_clusters = NULL,
-                    epsMax = 10,
-                    minPts = 5,
-                    pctLM=0.05,
-                    pcorTH=0.1)
+InferLandmark <- function(Integration.l,
+                          pheno.v = NULL,
+                          pctG = 0.01,
+                          reduceMethod = c("PCA", "tSNE"),
+                          clusterMethod = c("PAM", "dbscan"),
+                          k_pam = 9,
+                          eps_dbscan = 10,
+                          minPts_dbscan = 5,
+                          pctLM = 0.05,
+                          pcorTH = 0.1)
 {
+    reduceMethod <- match.arg(reduceMethod)
+    clusterMethod <- match.arg(clusterMethod)
+    
     if (!is.null(Integration.l$data.sce)) {
         if (is.null(pheno.v)) {
             pheno.v <- 
@@ -221,53 +194,11 @@ PotencyInfer <- function(Integration.l,
     }
     exp.m <- Integration.l$expMC
     sr.v <- Integration.l$SR
+    ordpotS.v <- Integration.l$potencyState
+    nPS <- length(levels(as.factor(ordpotS.v)))
     
     ### set an integer for gene selection
     ntop <- floor(pctG*nrow(exp.m))
-    
-    ### fit Gaussian Mixture Model for potency inference
-    print("Fit Gaussian Mixture Model to Signaling Entropies")
-    logitSR.v <- log2(sr.v / (1 - sr.v))
-    if(mixmod == TRUE){ 
-        ## default assumes different variance for clusters
-        mcl.o <- Mclust(logitSR.v, G = seq_len(maxPS))
-    }
-    else {
-        mcl.o <- Mclust(logitSR.v, G = seq_len(maxPS), modelNames = c("E"))
-    }
-    potS.v <- mcl.o$class
-    nPS <- length(levels(as.factor(potS.v)))
-    print(paste("Identified ",nPS," potency states",sep=""))
-    # names(potS.v) <- paste("PS",seq_len(nPS),sep="")
-    for (i in seq_len(nPS)) {
-        names(potS.v[which(potS.v == i)]) <- rep(paste("PS",i,sep=""), 
-                                                 times = length(which(potS.v == i)))
-    }
-    
-    mu.v <- mcl.o$param$mean
-    sd.v <- sqrt(mcl.o$param$variance$sigmasq)
-    avSRps.v <- (2^mu.v)/(1+2^mu.v)
-    savSRps.s <- sort(avSRps.v, decreasing=TRUE, index.return=TRUE)
-    spsSid.v <- savSRps.s$ix
-    ordpotS.v <- match(potS.v,spsSid.v)
-    if(!is.null(pheno.v)){
-        nPH <- length(levels(as.factor(pheno.v)));
-        distPSph.m <- table(pheno.v,ordpotS.v)
-        print("Compute Shannon (Heterogeneity) Index for each Phenotype class");
-        probPSph.m <- distPSph.m/apply(distPSph.m,1,sum);
-        hetPS.v <- vector();
-        for(ph in seq_len(nPH)){
-            prob.v <- probPSph.m[ph,];
-            sel.idx <- which(prob.v >0);
-            hetPS.v[ph] <- 
-                - sum(prob.v[sel.idx]*log(prob.v[sel.idx]))/log(nPS);
-        }
-        names(hetPS.v) <- rownames(probPSph.m);
-        print("Done");
-    }
-    else {
-        distPSph.m=NULL; probPSph.m=NULL; hetPS.v=NULL;
-    }
     
     ### now cluster cells independently of SR
     ### select genes over which to cluster
@@ -283,13 +214,10 @@ PotencyInfer <- function(Integration.l,
     }
     selGcl.v <- tmpG2.v;
     
-    ### now perform clustering of all cells over the selected genes
+    ### do dimension reduction
     if (reduceMethod == "tSNE") {
-        print("Identifying co-expression clusters via tSNE")
-        if (is.null(num_clusters)) {
-            stop("Please specify cluster numbers if use tSNE for dimension reduction!")
-        }
-        map.idx <- match(selGcl.v,rownames(exp.m))
+        print("Do dimension reduction via tSNE")
+        map.idx <- match(selGcl.v, rownames(exp.m))
         data_tsne.m <- exp.m[map.idx ,]
         irlba_res <- irlba::prcomp_irlba(t(data_tsne.m), n = rmt.o$dim
                                          , center = TRUE)
@@ -297,25 +225,18 @@ PotencyInfer <- function(Integration.l,
         topDim_pca <- irlba_pca_res
         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = 2, 
                                  pca = FALSE)
-        reducedMatrix <- tsne_res$Y[, 1:2]
-        Integration.l$tSNE.mat <- reducedMatrix
-        dbsc.v <- vector()
-        eps.v <- vector()
-        id.x <- 1
-        for(k in seq(from = 1, to = epsMax, by = 0.2)){
-            dbsc.o <- dbscan::dbscan(reducedMatrix, eps = k, minPts = minPts)
-            clust.idx <- which(dbsc.o$cluster>0)
-            label.v <- dbsc.o$cluster[clust.idx]
-            if (length(unique(as.factor(label.v))) == num_clusters) {
-                break()
-            }
-            dbsc.v[id.x] <- length(unique(as.factor(dbsc.o$cluster)))
-            eps.v[id.x] <- k
-            id.x <- id.x + 1
-        }
-        id.x <- which((dbsc.v - num_clusters) == min(dbsc.v - num_clusters))[1]
-        eps.value <- min(k, eps.v[id.x])
-        dbsc.o <- dbscan::dbscan(reducedMatrix, eps = eps.value, minPts = minPts)
+        coordinates <- tsne_res$Y[, 1:2]
+        Integration.l$coordinates <- coordinates
+    }else {
+        print("Do dimension reduction via PCA")
+        coordinates <- svd.o$v[, 1:2]
+        Integration.l$coordinates <- coordinates
+    }
+    
+    ### now perform clustering of all cells over the selected genes
+    if (clusterMethod == "dbscan") {
+        print("Identifying co-expression clusters via dbscan")
+        dbsc.o <- dbscan::dbscan(coordinates, eps = eps_dbscan, minPts = minPts_dbscan)
         clust.idx <- dbsc.o$cluster
         k.opt <- length(unique(as.factor(dbsc.o$cluster)))
         print(paste("Inferred ",k.opt," clusters",sep=""))
@@ -325,7 +246,7 @@ PotencyInfer <- function(Integration.l,
         map.idx <- match(selGcl.v,rownames(exp.m));
         distP.o <- as.dist( 0.5*(1-cor(exp.m[map.idx,])) );
         asw.v <- vector();
-        for(k in 2:kmax){
+        for(k in 2:k_pam){
             pam.o <- pam(distP.o,k,stand=FALSE);
             asw.v[k-1] <- pam.o$silinfo$avg.width
         }
@@ -335,6 +256,7 @@ PotencyInfer <- function(Integration.l,
         print(paste("Inferred ",k.opt," clusters",sep=""))
         psclID.v <- paste("PS",ordpotS.v,"-CL",clust.idx,sep="")
     }
+    
     ### identify landmark clusters
     print("Now identifying landmarks (potency co-expression clusters)")
     distPSCL.m <- table(paste("CL",clust.idx,sep=""),
@@ -382,6 +304,7 @@ PotencyInfer <- function(Integration.l,
     medLM.m <- med.m[,ldmkCL.idx];
     colnames(medLM.m) <- namePSCL.v[ldmkCL.idx];
     rownames(medLM.m) <- selGcl.v;
+    
     ### now project each cell onto two nearest landmarks
     print("Inferring dependencies/trajectories/transitions between landmarks");
     cellLM2.v <- vector(); cellLM.v <- vector();
@@ -411,24 +334,12 @@ PotencyInfer <- function(Integration.l,
     netLM.m[pcorLM.m < pcorTH] <- 0;
     netLM.m[pcorLM.m > pcorTH] <- 1;    
     
-    if (!is.null(Integration.l$data.sce)) {
-        colData(Integration.l$data.sce)$potencyState <- ordpotS.v
-    }else if (!is.null(Integration.l$data.cds)) {
-        pData(Integration.l$data.cds)$potencyState <- ordpotS.v
-    }
-    Integration.l$potencyState <- ordpotS.v
-    
-    if (!is.null(pheno.v)) {
-        Integration.l$distPSPH <- distPSph.m
-    }
-    
-    Integration.l$potencyInfer.l <- list(potS=ordpotS.v,distPSPH=distPSph.m,prob=probPSph.m,
-                                          hetPS=hetPS.v,cl=clust.idx,pscl=psclID.v,
-                                          distPSCL=distPSCL.m,medLM=medLM.m,srPSCL=srPSCL.v,
-                                          srLM=srLM.v,distPHLM=distPHLM.m,cellLM=cellLM.v,
-                                          cellLM2=cellLM2.v,adj=sadjLM.m,pcorLM=pcorLM.m,
-                                          netLM=netLM.m)
-    
+    Integration.l$InferLandmark.l <- list(cl=clust.idx,pscl=psclID.v,
+                                          distPSCL=distPSCL.m,medLM=medLM.m,
+                                          srPSCL=srPSCL.v,srLM=srLM.v,
+                                          distPHLM=distPHLM.m,cellLM=cellLM.v,
+                                          cellLM2=cellLM2.v,adj=sadjLM.m,
+                                          pcorLM=pcorLM.m,netLM=netLM.m)
     
     return(Integration.l)
 }

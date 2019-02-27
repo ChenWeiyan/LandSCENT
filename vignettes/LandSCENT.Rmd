@@ -233,43 +233,74 @@ Integration.l$SR <- SR.v
 SR.o <- Integration.l
 ```
 
-```{r boxplot, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+```{r boxplot, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 boxplot(SR.o$SR ~ phenoExample.v, main = "SR values against cell types", xlab = "Cell Types", ylab = "SR values")
 ```
+
+![Fig1. SR Boxplot](SR_boxplot.jpg)
 
 Here *hESC* and *EC* refer to human embryonic stem cells and mesoderm progenitor cells, respectively.
 
 ## Infer the potency states in a cell population
 
-Having estimated the cell potency values, we next may want to explore the heterogeneity in potency within the cell population and infer lineage relationships. One way to approach this question is to use the `PotencyInfer` function. 
+Having estimated the cell potency values, we can then infer cell potency states with `InferPotency` function. This function provides the discrete potency states of single cells and its distribution across the single cell populations.
 
-This function infers the discrete potency states of single cells, its distribution across the single cell populations, identifies potency-coexpression clusters of single cells called landmarks, and finally infers the dependencies of these landmarks which can aid in recontructing lineage trajectories in time course scRNA-Seq experiments.
+If you have no phenotype information, you can simply implement this method with above aforementioned object *SR.o*:
 
-If you have no phenotype information, you can simply implement this method with above output object *SR.o*:
-
-```{r PotencyInfer no pheno1, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-potencyInfer.o <- PotencyInfer(SR.o)
+```{r InferPotency no pheno1, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
+InferPotency.o <- InferPotency(SR.o)
 ```
 
-```{r PotencyInfer no pheno2, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-potencyInfer.o$potencyState
+Then the infered distinct potency states for every cell will be stored in the element named `potencyState`.
+
+```{r InferPotency no pheno2, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
+InferPotency.o$potencyState
 ```
 
-Then the infered distinct potency states for every cell will be stored in the element named `potencyState` of the output object.
+But with the phenotype information provided, `InferPotency` function could tell the distribution of potency states in relation to cell-types:
 
-But with the phenotype information provided, `PotencyInfer` function could tell the distribution of potency states in relation to cell-types:
-
-```{r PotencyInfer with pheno1, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-potencyInfer.o <- PotencyInfer(SR.o, pheno.v = phenoExample.v)
+```{r InferPotency with pheno1, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+InferPotency.o <- InferPotency(SR.o, pheno.v = phenoExample.v)
 ```
 
-```{r PotencyInfer with pheno2, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-potencyInfer.o$distPSPH
+```{r InferPotency with pheno2, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+InferPotency.o$distPSPH
 ```
 
-This result indicates that `PotencyInfer` function inferred 2 potency states, with the first potency state being occupied only by human embryonic stem cells(hESC), while the second potency state is enriched for mesoderm progenitor cells(EC).
+This result indicates that `InferPotency` function inferred 2 potency states, with the first potency state being occupied only by human embryonic stem cells(hESC), while the second potency state is enriched for mesoderm progenitor cells(EC).
 
 Such results will also be stored for `SingleCellExperiment` and `CellDataSet` objects.
+
+## Infer potency-coexpression clusters (landmarks)
+
+Next step, we may want to explore the heterogeneity in potency within the cell population and infer lineage relationships. One way to approach this question is to use the `InferLandmark` function. 
+
+This function identifies potency-coexpression clusters (landmark) of single cells called landmarks, and finally infers the dependencies of these landmarks which can aid in recontructing lineage trajectories.
+
+With aforementioned result *InferPotency.o*, one can easily implement this function:
+
+```{r InferLandmark v1, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+InferLandmark.o <- InferLandmark(InferPotency.o, pheno.v = phenoExample.v,
+                                 reduceMethod = "PCA", clusterMethod = "PAM")
+```
+
+`InferLandmark` will do dimension reduction inside, so we provide two arguments, *reduceMethod* and *clusterMethod*, for you to decide the methods you want.
+
+For *reduceMethod*, one can choose `tSNE` or `PCA`. And for *clusterMethod*, one can select `PAM` or `dbscan`.
+
+The results of this function will be stored in a list named *InferLandmark.l* inside the output object. For examle, you can access the landmark index for every single cell with:
+
+```{r InferLandmark v2, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+InferLandmark.o$InferLandmark.l$cl
+```
+
+You can also access the cell number distribution of phenotype against landmark with:
+
+```{r InferLandmark v3, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+InferLandmark.o$InferLandmark.l$distPHLM
+```
+
+For more information, you can check the help pages.
 
 ## Application on bulk samples
 
@@ -282,8 +313,7 @@ data(tsne.o)
 data(potS.v)
 data(SR4.v)
 potS.v <- 4 - potS.v
-scent.o <- list(potS = potS.v)
-potencyInfer.o <- list(potencyInfer.l = scent.o, SR = SR4.v)
+InferLandmark.o <- list(potencyState = potS.v, SR = SR4.v)
 library(marray)
 ```
 
@@ -291,43 +321,46 @@ Here, we used an example dataset contains 3473 human breast epithelial cells fro
 
 ### `Plot_LandSR` function
 
-This function generates figures which compares cell density across different distinct potency states, which are inftered by `PotencyInfer` function. 
+This function generates figures which compares cell density across different distinct potency states, which are inftered by `InferPotency` function. 
 
-We provide arguments for you to choose whether to do dimension reduction inside the function or to input the reduced diemension matrix yourself. And you can specify the color between all cell density and distinct potency cell density.
+We provide arguments for you to choose whether to inherent dimension reduction result from the *InferLandmark.o* object, or to input the reduced diemension coordinates yourself. 
+
+And you can specify the color between all cell density and distinct potency cell density.
 
 The horizon lines of these density maps decrease from left to right, which indicates the cell potency states decrease from high (PS1) to low (PS3).
 
-```{r Plot_LandSR , eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-LandSR.o <- Plot_LandSR(potencyInfer.o, reducedMatrix = tsne.o, 
-                        reduceDim = FALSE, colpersp = NULL, 
+```{r Plot_LandSR , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
+LandSR.o <- Plot_LandSR(InferLandmark.o, coordinates = tsne.o, colpersp = NULL, 
                         colimage = NULL, bty = "f", PDF = FALSE)
 ```
 
-The output list *LandSR.o* will store the tSNE cluster result. you can easily access it with
+![Fig2. PotencyComparison Plot](PotencyComparison.jpg)
+
+The output list *LandSR.o* will store the input coordinates as an element, in *LandSR.o$coordinates*. you can easily access it with
 
 ```{r tSNE matrix , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
-LandSR.o$tSNE.m
+LandSR.o$coordinates
 ```
 
 ### `Plot_CellSR` function
 
 This function generates figures that shows cell density on top of cell SR value distribution.
 
-We also provide arguments for you to choose whether to do dimension reduction inside the function or to input the reduced diemension matrix yourself. And you can specify the color of cell density and SR values distribution.
+We also provide arguments for you to choose whether to inherent dimension reduction result from the *InferLandmark.o* object, or to input the reduced diemension coordinates yourself. 
+
+And you can specify the color of cell density and SR values distribution.
 
 **Note** that the input argument *num-grid* is sensitive to the data size, which indicates the number of grid points in each direction. So it should be well asigned bsed on your own dataset. See more details in package help page.
 
-```{r Plot_CellSR , eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-CellSR.o <- Plot_CellSR(potencyInfer.o, reducedMatrix = tsne.o, 
-                        reduceDim = FALSE, num_grid = 35, theta = 40, 
-                        colpersp = NULL, colimage = NULL, bty = "f", PDF = FALSE)
+```{r Plot_CellSR , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
+CellSR.o <- Plot_CellSR(InferLandmark.o, coordinates = tsne.o, 
+                        num_grid = 35, theta = 40, colpersp = NULL, 
+                        colimage = NULL, bty = "f", PDF = FALSE)
 ```
 
-The output list *CellSR.o* will also store the tSNE cluster result, in *CellSR.o$tSNE.m*.
+![Fig3. CellDensitySR Plot](CellDensitySR.jpg)
 
-### One Note for these two plot functions
-
-We provide two control arguments named *mean_cutoff* and *sd_cutoff* in these two plot functions. They are for you to choose genes that need to be used for dimention reduction inside the functions. You should set these two arguments based on your own dataset. The default values for them are 1 and 0.5, respectively.
+The output list *CellSR.o* will also store the input coordinates as an element, in *CellSR.o$coordinates*.
 
 ## A "pipeline" function for easy use
 
@@ -337,13 +370,13 @@ It takes the scRNA-seq data and network matrix with some control arguments as it
 ```{r DoLandSCENT , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 DoLandSCENT.o <- DoLandSCENT(exp.m = Example.m, ppiA.m = net13Jun12.m,
                              mc.cores = 30, pheno.v = NULL, 
-                             reducedMatrix = NULL, reduceDim = TRUE, 
+                             coordinates = NULL,
                              PLOT = FALSE, PDF = FALSE)
 ```
 
 ## Extract objects from function results
 
-If users provided `SingleCellExperiment` or `CellDataSet` objects as the input, it then can be easily to extract the *sce* or *cds* from the results. The *sce* or *cds* objects are stored in the list with name **data.sce** and **data.cds**, respectively. And SR values or potency states are already been added to their phenotype information, so you can get such information in the **colData** or **pData**, respectively.
+If users provided `SingleCellExperiment` or `CellDataSet` objects as the input, it then can be easily to extract the *sce* or *cds* from the results. The *sce* or *cds* objects are stored in the list with name **data.sce** and **data.cds**, respectively. And SR values and potency states are already been added to their phenotype information, so you can get such information in the **colData** or **pData**, respectively.
 
 Take *SR.o* as an example:
 

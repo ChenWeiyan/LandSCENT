@@ -37,14 +37,9 @@
 #' from your original sce/cds data, please store the phenotype information
 #' as name of \code{phenoInfo}.
 #' 
-#' @param reducedMatrix
-#' The previous reduced dimension matrix, with rows lalabeling cells and two
-#' colums labeling reduced dimensions.(Optional, only used when 
-#' \code{reduceDim} is set to \code{FALSE})
-#' 
-#' @param reduceDim
-#' A logical, do deminsion reduction or not before generate the plots.
-#' Default is TRUE.
+#' @param coordinates
+#' Optional. The previous reduced dimension coordinates, with rows lalabeling cells 
+#' and two colums labeling reduced dimensions
 #' 
 #' @param PLOT
 #' A logical. Decides whether to generate (default) the landSR figure 
@@ -68,8 +63,7 @@ DoLandSCENT <- function(exp.m,
                         log_trans = FALSE,
                         mc.cores = 1,
                         pheno.v = NULL,
-                        reducedMatrix = NULL,
-                        reduceDim = TRUE,
+                        coordinates = NULL,
                         PLOT = TRUE,
                         PDF = TRUE)
 {
@@ -81,23 +75,28 @@ DoLandSCENT <- function(exp.m,
     ### compute SR values for every cells
     Integration.l <- CompSRana(Integration.l, mc.cores = mc.cores)
     
-    ### infer potency state and call landmarks
-    Integration.l <- PotencyInfer(Integration.l, 
-                                   pheno.v = pheno.v, 
-                                   mixmod=TRUE,
-                                   maxPS=5,
-                                   pctG=0.01,
-                                   kmax=9,
-                                   reduceMethod = "PAM",
-                                   num_clusters = NULL,
-                                   epsMax = 10,
-                                   minPts = 5,
-                                   pctLM=0.05,
-                                   pcorTH=0.1)
+    ### infer potency states
+    Integration.l <- InferPotency(Integration.l,
+                                  pheno.v = pheno.v,
+                                  diffvar = TRUE,
+                                  maxPS = 5)
+    
+    ### infer landmarks
+    Integration.l <- InferLandmark (Integration.l,
+                                    pheno.v = pheno.v,
+                                    pctG = 0.01,
+                                    reduceMethod = "PCA",
+                                    clusterMethod = "PAM",
+                                    k_pam = 9,
+                                    eps_dbscan = 10,
+                                    minPts_dbscan = 5,
+                                    pctLM = 0.05,
+                                    pcorTH = 0.1)
     
     ### generate figures
     if (PLOT == TRUE) {
-        Integration.l <- Plot_LandSR(Integration.l, reducedMatrix = reducedMatrix, reduceDim = reduceDim, PDF = PDF)
+        Integration.l <- Plot_LandSR(Integration.l, coordinates = coordinates, PDF = PDF)
+        Integration.l <- Plot_CellSR(Integration.l, coordinates = coordinates, PDF = PDF)
     }
     
     return(Integration.l)
