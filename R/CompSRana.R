@@ -14,7 +14,7 @@
 #' A list object from \code{DoIntegPPI} function.
 #' 
 #' @param local
-#' A logical. If true (default), function computes the normalized 
+#' A logical (default is FALSE). If TRUE, function computes the normalized 
 #' local signaling entropies of each gene in the network.
 #' 
 #' @param mc.cores
@@ -108,7 +108,7 @@
 #' @export
 #'
 CompSRana <- function(Integration.l,
-                      local=TRUE,
+                      local = FALSE,
                       mc.cores=1)
 {
     ### compute maxSR for SR normalization

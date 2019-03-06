@@ -54,7 +54,7 @@ library(LandSCENT)
 data(net13Jun12.m)
 ```
 
-**One thing** needs to be stressed out: the nodes (genes) are labeled with Entrez gene ID, and the network is documented with entries "0" and "1". ”0” entries indicate that there is no interaction or connection between the two genes, while a ”1” means there is an interaction. *Importantly*, the diagonal entries are set to "0".
+Importantly, the nodes (genes) in this network are labeled with Entrez gene IDs, and entries take on values "0" and "1", with "0" indicating that there is no interaction or connection between the two genes, and ”1” indicating there an interaction has been reported. It is also important to note that the diagonal entries are set to "0".
 
 # Single cell RNA-seq data
 
@@ -62,9 +62,9 @@ We assume that you have a matrix/object containing expression count data summari
 
 **If you have a normalized data matrix already, you can directly go to the 4th section of this vignette.**
 
-**Moreover, we provide input arguements for `SingleCellExperiment` (scater) and `CellDataSet` (monocle) class in `DoInegPPI` function. If you have objects of such two classes, could also directly go to the 4th section.**
+**Moreover, we provide input arguements for `SingleCellExperiment` (scater) and `CellDataSet` (monocle) class in `DoIntegPPI` function. If you have objects of such two classes, you could also directly go to the 4th section.**
 
-Here we use a scRNA-Seq dataset from [@ChuData], generated with the Fluidigm C1 platform, as an example. Due to the package size restriction, we cannot store the whole data matrix in the package. However, the example is a sub-dataset of 100 cells with two cell types(*hESC* and *EC*). You can access the raw data and phenotype information using `data` function.
+Here we use a scRNA-Seq dataset from [@ChuData], generated with the Fluidigm C1 platform, as an example. Due to the package size restriction, we cannot store the whole data matrix in the package. However, the example is a sub-dataset of 100 cells with two cell types: pluripotent human embryonic stem cells (*hESC*) and  non-pluripotent progenitors of endothelial cells (*EC*). You can access the raw data and phenotype information using `data` function.
 
 ```{r quick load example data, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
 data(rawExample.m)
@@ -132,7 +132,7 @@ sizeFactors(example.sce) <- librarySizeFactors(example.sce)
 
 Scaling normalization is then used to remove cell-specific biases, e.g. coverage or capture efficiency. Log-transformed normalized expression values can be simply computed with `normalize` function.
 
-**Importantly**, we need to add an offset value of 1.1 before log-transformation. The offset is added in order to ensure that the minimum value after log-transformation would not be 0, but a nonzero value (typically log~2~1.1). We do not want zeroes in our final matrix since the computation of signaling entropy rate involves ratios of gene expression values and zeros in the denominator are undefined.
+**Importantly**, we need to add an offset value of 1.1 before log-transformation. The offset is added in order to ensure that the minimum value after log-transformation would not be 0, but a nonzero value (typically log2(1.1)~0.14). We do not want zeroes in our final matrix since the computation of signaling entropy rate involves ratios of gene expression values and zeros in the denominator are undefined.
 
 ```{r normalization, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
 example.sce <- normalize(example.sce, log_exprs_offset = 1.1)
@@ -188,7 +188,7 @@ The estimation of differentiation potency with `LandSCENT` consists of two major
 * Integration of the scRNA-Seq data with the user-defined gene functional network.
 * Computation of the Signaling Entropy Rate (denoted SR) which is used to approximate differentiation potency of single cells.
 
-A typical workflow strats from integration of the scRNA-Seq data with the user-defined gene functional network. Here you can simply apply `DoIntegPPI` function on *Example.m* dataset and PPI network *net13Jun12.m*:
+A typical workflow starts from integration of the scRNA-Seq data with the user-defined gene functional network. Here you can simply apply `DoIntegPPI` function on *Example.m* dataset and PPI network *net13Jun12.m*:
 
 ```{r , eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 data(Example.m)
@@ -212,18 +212,18 @@ With the output object *Integration.l*, we can now proceed to compute the SR val
 SR.o <- CompSRana(Integration.l, local = TRUE, mc.cores = 40)
 ```
 
-Here we run the `CompSRana` function with 40 cores, which means the computer should have at least 40 processing cores. In your case, you may set *mc.cores* value based on your own computer/sever.
+Here we run the `CompSRana` function with 40 cores, which means the computer should have at least 40 processing cores. In your case, you may set *mc.cores* value based on your own computer/server.
 
 The output argument *SR.o* is a list that added four elements onto the input *Integration.l*:
 
 * *SR*: the SR value of the cells.
-* *inv*: a matrix stores the invariant measure, or steady-state probability, for all the samples. That is, column labels the sample, and row labels the nodes in the *adjMC* matrix. Entries in every column add to 1.
+* *inv*: a matrix specifying the invariant measures, or steady-state probabilities, for each cell/sample over the network. That is, each column labels a cell/sample and is of length equal to the number of nodes in the *adjMC* matrix, with its entries adding to 1.
 * *s*: a matrix containing the unnormalized local signaling entropies, and therefore row number equals to the number of nodes in the *adjMC* matrix, column number equals to cell number.
 * *ns*: if local=TRUE, a matrix containing normalized local signaling entropies.
 
 **More** for users with `SingleCellExperiment` and `CellDataSet` classes: the SR values will also be added as a new phenotype information onto the original sce and cds objects with name `SR`.
 
-One note with the above step: the local gene-based entropies can be used in downstream analyses for ranking genes according to differential entropy, but only if appropriately normalized. For instance, they could be used to identify the main genes driving changes in the global signaling entropy rate of the network. However, if the user only wishes to estimate potency, specifying *local=FALSE* is fine, which will save some RAM on the output object.
+One note with the above step: the local gene-based entropies can be used in downstream analyses for ranking genes according to differential entropy, but only if appropriately normalized. For instance, they could be used to identify the main genes driving changes in the global signaling entropy rate of the network. However, if the user only wishes to estimate potency, specifying *local=FALSE* is fine, which will save some RAM on the output object, which is why we make it the default option.
 
 As we mentioned above, we provide the example's phenotype infromation in the package, stored in the *phenoExample.v* vector. With SR values and the phenotype information, you can then check that the SR values do indeed correlate with potency:
 
@@ -239,11 +239,11 @@ boxplot(SR.o$SR ~ phenoExample.v, main = "SR values against cell types", xlab = 
 
 ![](SR_boxplot.jpg)
 
-Here *hESC* and *EC* refer to human embryonic stem cells and mesoderm progenitor cells, respectively.
+Here *hESC* and *EC* refer to human embryonic stem cells and progenitors of endothelial cells, respectively.
 
 ## Infer the potency states in a cell population
 
-Having estimated the cell potency values, we can then infer cell potency states with `InferPotency` function. This function provides the discrete potency states of single cells and its distribution across the single cell populations.
+Having estimated the cell potency values, we can then infer cell potency states with `InferPotency` function. This function infers discrete potency states of single cells and its distribution across the single cell populations.
 
 If you have no phenotype information, you can simply implement this method with above aforementioned object *SR.o*:
 
@@ -257,7 +257,7 @@ Then the infered distinct potency states for every cell will be stored in the el
 InferPotency.o$potencyState
 ```
 
-But with the phenotype information provided, `InferPotency` function could tell the distribution of potency states in relation to cell-types:
+But if phenotype information is provided, `InferPotency` will return the distribution of potency states in relation to the phenotype classes provided (e.g. cell-types):
 
 ```{r InferPotency with pheno1, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
 InferPotency.o <- InferPotency(SR.o, pheno.v = phenoExample.v)
@@ -275,13 +275,14 @@ Such results will also be stored for `SingleCellExperiment` and `CellDataSet` ob
 
 Next step, we may want to explore the heterogeneity in potency within the cell population and infer lineage relationships. One way to approach this question is to use the `InferLandmark` function. 
 
-This function identifies potency-coexpression clusters (landmark) of single cells called landmarks, and finally infers the dependencies of these landmarks which can aid in recontructing lineage trajectories.
+This function identifies potency-coexpression clusters of single cells called landmarks, and finally infers the dependencies of these landmarks which can aid in recontructing lineage trajectories.
 
 With aforementioned result *InferPotency.o*, one can easily implement this function:
 
 ```{r InferLandmark v1, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
 InferLandmark.o <- InferLandmark(InferPotency.o, pheno.v = phenoExample.v,
-                                 reduceMethod = "PCA", clusterMethod = "PAM")
+                                 reduceMethod = "PCA", clusterMethod = "PAM",
+                                 k_pam = 2)
 ```
 
 `InferLandmark` will do dimension reduction inside, so we provide two arguments, *reduceMethod* and *clusterMethod*, for you to decide the methods you want.
@@ -304,7 +305,7 @@ For more information, you can check the help pages.
 
 ## Application on bulk samples
 
-One important feature of `LandSCENT` package is that it can also be applied on bulk RNA-seq data. The procedure is identical with single-cell RNA-Seq data, the only difference is in the specific preprocessing and normalization of the data.
+It is important to note that the differentiation potency estimation step can also be applied on bulk RNA-seq data. The procedure is identical with single-cell RNA-Seq data, the only difference is in the specific preprocessing and normalization of the data.
 
 ## Density based visualization tool
 

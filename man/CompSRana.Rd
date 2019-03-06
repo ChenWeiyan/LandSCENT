@@ -5,12 +5,12 @@
 \title{Computes the signaling entropy of given gene expression profiles 
 over a given connected network}
 \usage{
-CompSRana(Integration.l, local = TRUE, mc.cores = 1)
+CompSRana(Integration.l, local = FALSE, mc.cores = 1)
 }
 \arguments{
 \item{Integration.l}{A list object from \code{DoIntegPPI} function.}
 
-\item{local}{A logical. If true (default), function computes the normalized 
+\item{local}{A logical (default is FALSE). If TRUE, function computes the normalized 
 local signaling entropies of each gene in the network.}
 
 \item{mc.cores}{The number of cores to use, i.e. at most how many child processes will 
