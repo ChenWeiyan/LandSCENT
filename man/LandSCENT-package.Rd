@@ -22,8 +22,7 @@ differentiation potency or phenotypic plasticity. It also incorporates
 functionality for quantifying intercellular heterogeneity, for identifying
 interesting subpopulations of cells that differ in terms of potency or
 plasticity, as well as to infer dependencies between single cell
-clusters, which for instance can help identify lineage trajectories in
-time course differentiation experiments.
+clusters, which for instance can help identify lineage trajectories.
 }
 \examples{
 ### see example for CompSRana function for typical workflow
