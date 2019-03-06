@@ -140,41 +140,6 @@ Plot_CellSR <- function(Integration.l,
                         bty = "b",
                         PDF = TRUE)
 {
-    ### Reduce Dimension via tSNE method
-    # if (reduceDim == TRUE) {
-    #     if (is.null(Integration.l$tSNE.mat)) {
-    #         sd.v <- apply(Integration.l$expMC, 1, sd)
-    #         mean.v <- apply(Integration.l$expMC, 1, mean)
-    #         selG.idx <- intersect(which(mean.v > mean_cutoff),
-    #                               which(sd.v > sd_cutoff));
-    #         
-    #         irlba_res <- irlba::prcomp_irlba(t(Integration.l$expMC[selG.idx ,]), 
-    #                                          n = num_dim, 
-    #                                          center = TRUE)
-    #         irlba_pca_res <- irlba_res$x
-    #         topDim_pca <- irlba_pca_res
-    #         tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = max_components, 
-    #                                  pca = FALSE)
-    #         coordinates <- tsne_res$Y[, 1:max_components]
-    #     }else{
-    #         coordinates <- Integration.l$tSNE.mat
-    #     }
-    #     component1.v <- coordinates[, 1]
-    #     component2.v <- coordinates[, 2]
-    # }else{
-    #     if (is.null(coordinates)) {
-    #         stop("Please input reduced dimension matrix of first two components!")
-    #     }
-    #     temp <- dim(coordinates)
-    #     if (temp[1] < temp[2]) {
-    #         coordinates <- t(coordinates)
-    #     }
-    #     component1.v <- coordinates[, 1]
-    #     component2.v <- coordinates[, 2]
-    # }
-    # 
-    # Integration.l$tSNE.m <- coordinates
-    
     ### Get inherent reduced coordinates or input coordinates
     if (is.null(coordinates)) {
         coordinates <- Integration.l$coordinates
