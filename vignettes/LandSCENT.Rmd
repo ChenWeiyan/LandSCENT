@@ -217,7 +217,7 @@ Here we run the `CompSRana` function with 40 cores, which means the computer sho
 The output argument *SR.o* is a list that added four elements onto the input *Integration.l*:
 
 * *SR*: the SR value of the cells.
-* *inv*: a matrix specifiying the invariant measure, or steady-state probability, over the network. That is, every column length will be equal to the number of nodes in the *adjMC* matrix, and its entries must add to 1.
+* *inv*: a matrix stores the invariant measure, or steady-state probability, for all the samples. That is, column labels the sample, and row labels the nodes in the *adjMC* matrix. Entries in every column add to 1.
 * *s*: a matrix containing the unnormalized local signaling entropies, and therefore row number equals to the number of nodes in the *adjMC* matrix, column number equals to cell number.
 * *ns*: if local=TRUE, a matrix containing normalized local signaling entropies.
 
