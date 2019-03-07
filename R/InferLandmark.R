@@ -217,9 +217,9 @@ InferLandmark <- function(Integration.l,
     ### do dimension reduction
     if (reduceMethod == "tSNE") {
         print("Do dimension reduction via tSNE")
-        map.idx <- match(selGcl.v, rownames(exp.m))
-        data_tsne.m <- exp.m[map.idx ,]
-        irlba_res <- irlba::prcomp_irlba(t(data_tsne.m), n = rmt.o$dim
+        # map.idx <- match(selGcl.v, rownames(exp.m))
+        # data_tsne.m <- exp.m[map.idx ,]
+        irlba_res <- irlba::prcomp_irlba(t(exp.m), n = rmt.o$dim
                                          , center = TRUE)
         irlba_pca_res <- irlba_res$x
         topDim_pca <- irlba_pca_res

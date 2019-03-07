@@ -287,9 +287,21 @@ InferLandmark.o <- InferLandmark(InferPotency.o, pheno.v = phenoExample.v,
 
 `InferLandmark` will do dimension reduction inside, so we provide two arguments, *reduceMethod* and *clusterMethod*, for you to decide the methods you want.
 
-For *reduceMethod*, one can choose `tSNE` or `PCA`. And for *clusterMethod*, one can select `PAM` or `dbscan`.
+1. For *reduceMethod*, one can choose `PCA` or `tSNE`.
+* If you choose `PCA`, then `InferLandmark` will return the coordinates with top two components of PCA result and store them in *InferLandmark.o$coordinates*.
+* If you choose `tSNE`, `InferLandmark` will firstly implement *RMT* method on the data matrix to estimate the number of significant components. Then it will do PCA under the estimated number of components. With such PCA result, tSNE will then be performed to generate data coordinates in two-dimensional space. The coordinates will also be stored in *InferLandmark.o$coordinates*.
 
-The results of this function will be stored in a list named *InferLandmark.l* inside the output object. For examle, you can access the landmark index for every single cell with:
+2. For *clusterMethod*, one can select `PAM` or `dbscan`.
+* Clustering via `PAM`: you need to specific the maximal number of the clustes, whose corresponding argument is `k_pam`.
+* Clustering via `dbscan`: we provide two arguments, `eps_dbscan` and `minPts_dbscan`, for you to optimize the clustering result. And you need to tune these two arguments based on your own dataset. The default values are 10 and 5, respectively. The implementation is also very straightforward:
+
+```{r InferLandmark tSNE, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
+InferLandmark.o <- InferLandmark(InferPotency.o, pheno.v = phenoExample.v,
+                                 reduceMethod = "PCA", clusterMethod = "dbscan",
+                                 eps_dbscan = 10, minPts_dbscan = 5)
+```
+
+The other results, except *coordinates*, of this function will be stored in a list named *InferLandmark.l* inside the output object *InferLandmark.o*. For example, you can access the landmark index for every single cell with:
 
 ```{r InferLandmark v2, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
 InferLandmark.o$InferLandmark.l$cl
