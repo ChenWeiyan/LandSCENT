@@ -210,7 +210,7 @@ Plot_LandSR <- function(Integration.l,
                         phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density",paste0("PS", (i+1))), bty = bty, plot = TRUE, xlab="component 1",ylab="component 2")
             }
             image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(potency.o$z), main = panel.text, xlim = xlim.v, ylim = ylim.v,
-                    colvar = CellDensity.o$z, col = colimage, colkey = colkeyimage, clab = c("","Cell Density","All"), add = TRUE, plot = TRUE)
+                    phi = phi, theta = theta, colvar = CellDensity.o$z, col = colimage, colkey = colkeyimage, clab = c("","Cell Density","All"), add = TRUE, plot = TRUE)
             color.id1 <- color.id1 + 2
             color.id2 <- color.id2 + 2
         }
@@ -248,7 +248,7 @@ Plot_LandSR <- function(Integration.l,
                         phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density",paste0("PS", (i+1))), bty = bty, plot = TRUE, xlab="component 1",ylab="component 2")
             }
             image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(potency.o$z), main = panel.text, xlim = xlim.v, ylim = ylim.v,
-                    colvar = CellDensity.o$z, col = colimage, colkey = colkeyimage, clab = c("","Cell Density","All"), add = TRUE, plot = TRUE)
+                    phi = phi, theta = theta, colvar = CellDensity.o$z, col = colimage, colkey = colkeyimage, clab = c("","Cell Density","All"), add = TRUE, plot = TRUE)
             color.id1 <- color.id1 + 2
             color.id2 <- color.id2 + 2
         }

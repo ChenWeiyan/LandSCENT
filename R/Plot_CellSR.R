@@ -190,7 +190,7 @@ Plot_CellSR <- function(Integration.l,
                 phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density", "All"), bty = bty, plot = TRUE, xlab="component 1",ylab="component 2")
         
         image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(CellDensity.o$z), xlim = xlim.v, ylim = ylim.v,
-                colvar = SR_plot, col = colimage, colkey = colkeyimage, clab = c("","Potency","SR"), add = TRUE, plot = TRUE)
+                phi = phi, theta = theta, colvar = SR_plot, col = colimage, colkey = colkeyimage, clab = c("","Potency","SR"), add = TRUE, plot = TRUE)
         dev.off()
     }else{
         xlim.v <- c(min(range(CellDensity.o$x), range(component1.v)), max(range(CellDensity.o$x), range(component1.v)))
@@ -202,7 +202,7 @@ Plot_CellSR <- function(Integration.l,
                 phi = phi, theta = theta, col = colpersp, colkey = colkeypersp, lighting = lighting, lphi = lphi, clab = c("","Cell Density", "All"), bty = bty, plot = TRUE, xlab="component 1",ylab="component 2")
         
         image3D(x = CellDensity.o$x, y = CellDensity.o$y, z = -max(CellDensity.o$z), xlim = xlim.v, ylim = ylim.v,
-                colvar = SR_plot, col = colimage, colkey = colkeyimage, clab = c("","Potency","SR"), add = TRUE, plot = TRUE)
+                phi = phi, theta = theta, colvar = SR_plot, col = colimage, colkey = colkeyimage, clab = c("","Potency","SR"), add = TRUE, plot = TRUE)
     }
     
     return(Integration.l)
