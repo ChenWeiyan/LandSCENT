@@ -144,7 +144,7 @@ min(example.m)
 
 Because `LandSCENT` will integrate the network with scRNA-Seq data, the row names and column names of the network must use the **same gene identifier** as used in the scRNA-Seq data.
 
-In our example, rownames of the data matrix are all gene symbols. So we need to use `mapIds` function in `r Biocpkg("AnnotationDbi")` package along with `r Biocpkg("org.Hs.eg.db")` package to get corresponding Entrez gene ID.
+In our example, rownames of the data matrix are all **human** gene symbols. So we need to use `mapIds` function in `r Biocpkg("AnnotationDbi")` package along with `r Biocpkg("org.Hs.eg.db")` package to get corresponding **human** Entrez gene ID.
 
 ```{r check gene identifier, eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 require(AnnotationDbi)

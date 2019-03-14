@@ -32,17 +32,17 @@
 #' 
 NULL
 
-#' Protein-protein interaction network 13Jun12
+#' Human protein-protein interaction network 13Jun12
 #'
-#' This protein-protein interaction network is derived from Pathway 
+#' This human protein-protein interaction network is derived from Pathway 
 #' Commons (www.pathwaycommons.org) (version Jun. 2012), which is 
 #' an integrated resource collating together PPIs from several 
 #' distinct sources.
 #'
 #' \itemize{
-#'   \item 121268 : Gene EntrzID 
-#'   \item 2193 : Gene EntrzID 
-#'   \item 79902 : Gene EntrzID
+#'   \item 121268 : Human Gene EntrzID 
+#'   \item 2193 : Human Gene EntrzID 
+#'   \item 79902 : Human Gene EntrzID
 #'   \item ...
 #' }
 #'
@@ -61,17 +61,17 @@ NULL
 #' 
 NULL
 
-#' Protein-protein interaction network 17Jan16
+#' Human protein-protein interaction network 17Jan16
 #'
-#' This protein-protein interaction network is derived from Pathway 
+#' This human protein-protein interaction network is derived from Pathway 
 #' Commons (www.pathwaycommons.org) (version Jan. 2016), which is 
 #' an integrated resource collating together PPIs from several 
 #' distinct sources.
 #'
 #' \itemize{
-#'   \item 121268 : Gene EntrzID
-#'   \item 2193 : Gene EntrzID
-#'   \item 79902 : Gene EntrzID
+#'   \item 121268 : Human Gene EntrzID
+#'   \item 2193 : Human Gene EntrzID
+#'   \item 79902 : Human Gene EntrzID
 #'   \item ...
 #' }
 #'

@@ -3,22 +3,22 @@
 \docType{data}
 \name{net13Jun12.m}
 \alias{net13Jun12.m}
-\title{Protein-protein interaction network 13Jun12}
+\title{Human protein-protein interaction network 13Jun12}
 \format{A matrix with 8434 rows and 8434 columns}
 \usage{
 data(net13Jun12.m)
 }
 \description{
-This protein-protein interaction network is derived from Pathway 
+This human protein-protein interaction network is derived from Pathway 
 Commons (www.pathwaycommons.org) (version Jun. 2012), which is 
 an integrated resource collating together PPIs from several 
 distinct sources.
 }
 \details{
 \itemize{
-  \item 121268 : Gene EntrzID 
-  \item 2193 : Gene EntrzID 
-  \item 79902 : Gene EntrzID
+  \item 121268 : Human Gene EntrzID 
+  \item 2193 : Human Gene EntrzID 
+  \item 79902 : Human Gene EntrzID
   \item ...
 }
 }
