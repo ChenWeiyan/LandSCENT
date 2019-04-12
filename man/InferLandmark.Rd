@@ -5,9 +5,9 @@
 \title{Infer co-expression landmarks from cells' SR values}
 \usage{
 InferLandmark(Integration.l, pheno.v = NULL, pctG = 0.01,
-  reduceMethod = c("PCA", "tSNE"), clusterMethod = c("PAM", "dbscan"),
-  k_pam = 9, eps_dbscan = 10, minPts_dbscan = 5, pctLM = 0.05,
-  pcorTH = 0.1)
+  Component_use = 20, reduceMethod = c("PCA", "tSNE"),
+  clusterMethod = c("PAM", "dbscan"), k_pam = 9, eps_dbscan = 10,
+  minPts_dbscan = 5, pctLM = 0.05, pcorTH = 0.1)
 }
 \arguments{
 \item{Integration.l}{A list object from \code{InferPotency} function.}
@@ -22,6 +22,9 @@ under the name of \code{phenoInfo}.}
 to select from each principal component in an SVD/PCA 
 of \code{Integration.l$expMC}. The union set of all selected genes 
 is then used for clustering. Default value is 0.01.}
+
+\item{Component_use}{A numeric. Specify the number of principal components in the PCA to use
+in the downstream analysis. Default value is 20.}
 
 \item{reduceMethod}{A character, either "PCA" or "tSNE". Indicates using PCA or
 tSNE method to do dimension reduction.}
@@ -98,6 +101,9 @@ medoids
 netLM
 Adjacency matrix of landmarks specifying which partial correlations are 
 significant
+
+selectGene
+Selected a group of genes for internal clustering
 }
 \description{
 This function identifies potency-coexpression clusters of single cells, 

@@ -25,6 +25,10 @@
 #' of \code{Integration.l$expMC}. The union set of all selected genes 
 #' is then used for clustering. Default value is 0.01.
 #' 
+#' @param Component_use
+#' A numeric. Specify the number of principal components in the PCA to use
+#' in the downstream analysis. Default value is 20.
+#' 
 #' @param reduceMethod
 #' A character, either "PCA" or "tSNE". Indicates using PCA or
 #' tSNE method to do dimension reduction.
@@ -94,6 +98,8 @@
 #' @return netLM
 #' Adjacency matrix of landmarks specifying which partial correlations are 
 #' significant
+#' @return selectGene
+#' Selected a group of genes for internal clustering
 #' 
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
@@ -149,7 +155,6 @@
 #' @import irlba
 #' @import Rtsne
 #' @importFrom dbscan dbscan
-#' @importFrom isva EstDimRMT
 #' @import SingleCellExperiment
 #' @importFrom SummarizedExperiment colData<- 
 #' @importFrom SummarizedExperiment colData
@@ -158,12 +163,14 @@
 #' @importFrom stats median
 #' @importFrom stats pnorm
 #' @importFrom stats sd
+#' @importFrom stats var
 #' @importFrom stats wilcox.test
 #' @export
 #'     
 InferLandmark <- function(Integration.l,
                           pheno.v = NULL,
                           pctG = 0.01,
+                          Component_use = 20,
                           reduceMethod = c("PCA", "tSNE"),
                           clusterMethod = c("PAM", "dbscan"),
                           k_pam = 9,
@@ -202,49 +209,60 @@ InferLandmark <- function(Integration.l,
     
     ### now cluster cells independently of SR
     ### select genes over which to cluster
-    print("Using RMT to estimate number of significant components of variation in scRNA-Seq data");
-    tmp.m <- exp.m - rowMeans(exp.m);
-    rmt.o <- isva::EstDimRMT(tmp.m, plot = FALSE);
-    svd.o <- svd(tmp.m);
-    tmpG2.v <- vector();
-    print(paste("Number of significant components=",rmt.o$dim,sep=""));
-    for(cp in seq_len(rmt.o$dim)){
-        tmp.s <- sort(abs(svd.o$u[,cp]),decreasing=TRUE,index.return=TRUE);
-        tmpG2.v <- union(tmpG2.v,rownames(exp.m)[tmp.s$ix[seq_len(ntop)]]);
-    }
-    selGcl.v <- tmpG2.v;
-    
-    ### do dimension reduction
-    if (reduceMethod == "tSNE") {
-        print("Do dimension reduction via tSNE")
-        # map.idx <- match(selGcl.v, rownames(exp.m))
-        # data_tsne.m <- exp.m[map.idx ,]
-        irlba_res <- irlba::prcomp_irlba(t(exp.m), n = rmt.o$dim
-                                         , center = TRUE)
-        irlba_pca_res <- irlba_res$x
-        topDim_pca <- irlba_pca_res
-        tsne_res <- Rtsne::Rtsne(as.matrix(topDim_pca), dims = 2, 
-                                 pca = FALSE)
-        coordinates <- tsne_res$Y[, 1:2]
-        Integration.l$coordinates <- coordinates
+    if (is.null(Integration.l$coordinates)) {
+        
+        rmtDim <- min(Component_use, ncol(exp.m))
+        tmp.m <- exp.m - rowMeans(exp.m)
+        
+        if (rmtDim == ncol(exp.m)) {
+            svd.o <- svd(tmp.m)
+        }else{
+            svd.o <- irlba::irlba(tmp.m, nv = rmtDim)
+        }
+        
+        ### select significant genes
+        tmpG2.v <- vector()
+        for(cp in seq_len(rmtDim)){
+            tmp.s <- sort(abs(svd.o$u[, cp]), decreasing=TRUE, index.return=TRUE)
+            tmpG2.v <- union(tmpG2.v, rownames(exp.m)[tmp.s$ix[seq_len(ntop)]])
+        }
+        selGcl.v <- tmpG2.v[which(tmpG2.v != "NA")]
+        Integration.l$selectGene <- selGcl.v
+        
+        ### do dimension reduction
+        if (reduceMethod == "tSNE") {
+            print("Do dimension reduction via tSNE")
+            pca.o <- irlba::prcomp_irlba(t(exp.m), n = rmtDim, 
+                                         center = TRUE)
+            irlba_pca_res <- pca.o$x
+            tsne_res <- Rtsne::Rtsne(as.matrix(irlba_pca_res), dims = 2, 
+                                     pca = FALSE)
+            coordinates <- tsne_res$Y[, 1:2]
+            Integration.l$coordinates <- coordinates
+        }else {
+            print("Do dimension reduction via PCA")
+            coordinates <- svd.o$v[, 1:2]
+            Integration.l$coordinates <- coordinates
+        }
     }else {
-        print("Do dimension reduction via PCA")
-        coordinates <- svd.o$v[, 1:2]
-        Integration.l$coordinates <- coordinates
+        print("Dimension reduction done already")
+        coordinates <- Integration.l$coordinates
+        selGcl.v <- Integration.l$selectGene
     }
+    
+    map.idx <- match(selGcl.v,rownames(exp.m))
     
     ### now perform clustering of all cells over the selected genes
     if (clusterMethod == "dbscan") {
         print("Identifying co-expression clusters via dbscan")
         dbsc.o <- dbscan::dbscan(coordinates, eps = eps_dbscan, minPts = minPts_dbscan)
-        clust.idx <- dbsc.o$cluster
+        clust.idx <- (dbsc.o$cluster + 1)
         names(clust.idx) <- colnames(Integration.l$expMC)
         k.opt <- length(unique(as.factor(dbsc.o$cluster)))
         print(paste("Inferred ",k.opt," clusters",sep=""))
         psclID.v <- paste("PS",ordpotS.v,"-CL",clust.idx,sep="")
     }else{
         print("Identifying co-expression clusters via PAM");
-        map.idx <- match(selGcl.v,rownames(exp.m));
         distP.o <- as.dist( 0.5*(1-cor(exp.m[map.idx,])) );
         asw.v <- vector();
         for(k in 2:k_pam){
@@ -286,6 +304,7 @@ InferLandmark <- function(Integration.l,
     }
     
     ### medoids
+    map.idx <- match(selGcl.v,rownames(exp.m))
     print("Constructing expression medoids of landmarks");
     med.m <- matrix(0,nrow=length(selGcl.v),ncol=nPS*k.opt);
     srPSCL.v <- vector();
@@ -344,3 +363,33 @@ InferLandmark <- function(Integration.l,
     
     return(Integration.l)
 }
+
+# EstRMT <- function(data.m, large = FALSE)
+# {
+#     M <- apply(data.m, 2, function(X) {
+#         (X - mean(X))/sqrt(var(X))
+#     })
+#     sigma2 <- stats::var(as.vector(M))
+#     Q <- nrow(data.m)/ncol(data.m)
+#     threshold.eigen <- sigma2 * (1 + 1/Q + 2 * sqrt(1/Q))
+# 
+#     c <- M/sqrt(nrow(M))
+#     
+#     if (large) {
+#         i.o <- irlba::irlba(c, nv = 100)
+#     }else{
+#         DimReach <- FALSE
+#         DimNum <- floor(min(300, ncol(data.m)*0.1))
+#         while (!DimReach) {
+#             i.o <- irlba::irlba(c, nv = DimNum)
+#             if (min(i.o$d^2) <= threshold.eigen) {
+#                 DimReach <- TRUE
+#             }
+#             DimNum <- DimNum + floor(min(100, ncol(data.m)*0.1))
+#         }
+#     }
+#     
+#     intdim <- length(which((i.o$d^2) > threshold.eigen))
+#     
+#     return(intdim)
+# }

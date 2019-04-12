@@ -124,7 +124,7 @@ DoIntegPPI <- function(exp.m,
                                           Biobase::pData(exp.m)[, 'Size_Factor']))
         data.m <- log2(data.m + 1.1)
     }else{
-        data.m <- exp.m
+        data.m <- as.matrix(exp.m)
         if (log_trans) {
             TRC.v <- colSums(exp.m)
             maxC <- max(TRC.v)
