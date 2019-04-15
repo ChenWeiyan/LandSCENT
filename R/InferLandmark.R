@@ -179,6 +179,7 @@ InferLandmark <- function(Integration.l,
                           pctLM = 0.05,
                           pcorTH = 0.1)
 {
+    set.seed(2019)
     reduceMethod <- match.arg(reduceMethod)
     clusterMethod <- match.arg(clusterMethod)
     
