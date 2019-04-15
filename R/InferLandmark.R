@@ -257,7 +257,13 @@ InferLandmark <- function(Integration.l,
     if (clusterMethod == "dbscan") {
         print("Identifying co-expression clusters via dbscan")
         dbsc.o <- dbscan::dbscan(coordinates, eps = eps_dbscan, minPts = minPts_dbscan)
-        clust.idx <- (dbsc.o$cluster + 1)
+        
+        Zero.idx <- length(which(dbsc.o$cluster == 0))
+        if (Zero.idx != 0) {
+            dbsc.o$cluster <- (dbsc.o$cluster + 1)
+        }
+        clust.idx <- dbsc.o$cluster
+        
         names(clust.idx) <- colnames(Integration.l$expMC)
         k.opt <- length(unique(as.factor(dbsc.o$cluster)))
         print(paste("Inferred ",k.opt," clusters",sep=""))
