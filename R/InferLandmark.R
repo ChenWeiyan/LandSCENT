@@ -251,7 +251,7 @@ InferLandmark <- function(Integration.l,
         if (reduceMethod == "tSNE") {
             print("Do dimension reduction via tSNE")
             pca.o <- irlba::prcomp_irlba(t(tmp.m), n = rmtDim, 
-                                         center = TRUE)
+                                         center = TRUE, scale. = TRUE)
             irlba_pca_res <- pca.o$x
             tsne_res <- Rtsne::Rtsne(as.matrix(irlba_pca_res), dims = 2, 
                                      pca = FALSE)
