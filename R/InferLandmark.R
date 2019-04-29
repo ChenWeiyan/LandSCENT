@@ -27,7 +27,7 @@
 #' 
 #' @param Component_use
 #' A numeric. Specify the number of principal components in the PCA to use
-#' in the downstream analysis. Default value is 20.
+#' in the downstream analysis. Default value is NULL.
 #' 
 #' @param reduceMethod
 #' A character, either "PCA" or "tSNE". Indicates using PCA or
@@ -170,7 +170,7 @@
 InferLandmark <- function(Integration.l,
                           pheno.v = NULL,
                           pctG = 0.01,
-                          Component_use = 20,
+                          Component_use = NULL,
                           reduceMethod = c("PCA", "tSNE"),
                           clusterMethod = c("PAM", "dbscan"),
                           k_pam = 9,
@@ -212,10 +212,27 @@ InferLandmark <- function(Integration.l,
     ### select genes over which to cluster
     if (is.null(Integration.l$coordinates)) {
         
-        rmtDim <- min(Component_use, ncol(exp.m))
-        tmp.m <- exp.m - rowMeans(exp.m)
+        tmp.m <- exp.m
         
-        if (rmtDim == ncol(exp.m)) {
+        num_cell <- ncol(tmp.m)
+        if (is.null(Component_use)) {
+            if (num_cell >= 2e4) {
+                print("Now estimating number of significant components of variation in scRNA-Seq data")
+                print("Warning: It may take a long time since dimensionality of data matrix is big!")
+                print("Consider specify number of compoents to use with 'Component_use'")
+                rmtDim <- EstRMT(tmp.m)
+            }else{
+                print("Now estimating number of significant components of variation in scRNA-Seq data")
+                rmtDim <- EstRMT(tmp.m)
+            }
+            print(paste("Number of significant components = ", rmtDim, sep=""))
+        }else{
+            Component_use <- min(Component_use, min(dim(tmp.m)))
+            print(paste("Using top ", Component_use, " principal compoents for downstream analysis", sep = ""))
+            rmtDim <- Component_use
+        }
+        
+        if (rmtDim >= floor(0.5*min(dim(tmp.m)))) {
             svd.o <- svd(tmp.m)
         }else{
             svd.o <- irlba::irlba(tmp.m, nv = rmtDim)
@@ -269,14 +286,14 @@ InferLandmark <- function(Integration.l,
         print(paste("Inferred ",k.opt," clusters",sep=""))
         psclID.v <- paste("PS",ordpotS.v,"-CL",clust.idx,sep="")
     }else{
-        print("Identifying co-expression clusters via PAM");
-        distP.o <- as.dist( 0.5*(1-cor(exp.m[map.idx,])) );
-        asw.v <- vector();
+        print("Identifying co-expression clusters via PAM")
+        distP.o <- as.dist( 0.5*(1-cor(exp.m[map.idx,])) )
+        asw.v <- vector()
         for(k in 2:k_pam){
-            pam.o <- pam(distP.o,k,stand=FALSE);
+            pam.o <- pam(distP.o,k,stand=FALSE)
             asw.v[k-1] <- pam.o$silinfo$avg.width
         }
-        k.opt <- which.max(asw.v)+1;
+        k.opt <- which.max(asw.v)+1
         pam.o <- pam(distP.o,k=k.opt,stand=FALSE)
         clust.idx <- pam.o$cluster
         print(paste("Inferred ",k.opt," clusters",sep=""))
@@ -371,32 +388,35 @@ InferLandmark <- function(Integration.l,
     return(Integration.l)
 }
 
-# EstRMT <- function(data.m, large = FALSE)
-# {
-#     M <- apply(data.m, 2, function(X) {
-#         (X - mean(X))/sqrt(var(X))
-#     })
-#     sigma2 <- stats::var(as.vector(M))
-#     Q <- nrow(data.m)/ncol(data.m)
-#     threshold.eigen <- sigma2 * (1 + 1/Q + 2 * sqrt(1/Q))
-# 
-#     c <- M/sqrt(nrow(M))
-#     
-#     if (large) {
-#         i.o <- irlba::irlba(c, nv = 100)
-#     }else{
-#         DimReach <- FALSE
-#         DimNum <- floor(min(300, ncol(data.m)*0.1))
-#         while (!DimReach) {
-#             i.o <- irlba::irlba(c, nv = DimNum)
-#             if (min(i.o$d^2) <= threshold.eigen) {
-#                 DimReach <- TRUE
-#             }
-#             DimNum <- DimNum + floor(min(100, ncol(data.m)*0.1))
-#         }
-#     }
-#     
-#     intdim <- length(which((i.o$d^2) > threshold.eigen))
-#     
-#     return(intdim)
-# }
+EstRMT <- function(data.m)
+{
+    print("Centering and scaling matrix")
+    M <- apply(data.m, 2, function(X) {
+        (X - mean(X))/sqrt(var(X))
+    })
+    print("Done, now performing SVD")
+    sigma2 <- stats::var(as.vector(M))
+    Q <- nrow(data.m)/ncol(data.m)
+    maxNEig <- min(dim(M))
+    nEigEst <- floor(maxNEig/10)
+    threshold.eigen <- sigma2 * (1 + 1/Q + 2 * sqrt(1/Q))
+    
+    c <- M/sqrt(nrow(M))
+    
+    if (min(dim(data.m)) >= 500) {
+        print(paste("Using Fast IRLBA to approximate ",nEigEst," top singular values",sep=""))
+        workDim <- 2 * nEigEst
+        i.o <- irlba::irlba(c, nv = nEigEst, nu = nEigEst, maxit = 1000, work = workDim)
+        evals <- (i.o$d^2)
+        print("Done")
+    }else{
+        print("Performing full SVD since dimensionality of data matrix is not big")
+        i.o <- svd(c)
+        evals <- (i.o$d^2)
+        print("Done")
+    }
+    
+    intdim <- length(which(evals > threshold.eigen))
+    
+    return(intdim)
+}

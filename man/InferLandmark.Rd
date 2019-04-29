@@ -5,7 +5,7 @@
 \title{Infer co-expression landmarks from cells' SR values}
 \usage{
 InferLandmark(Integration.l, pheno.v = NULL, pctG = 0.01,
-  Component_use = 20, reduceMethod = c("PCA", "tSNE"),
+  Component_use = NULL, reduceMethod = c("PCA", "tSNE"),
   clusterMethod = c("PAM", "dbscan"), k_pam = 9, eps_dbscan = 10,
   minPts_dbscan = 5, pctLM = 0.05, pcorTH = 0.1)
 }
@@ -24,7 +24,7 @@ of \code{Integration.l$expMC}. The union set of all selected genes
 is then used for clustering. Default value is 0.01.}
 
 \item{Component_use}{A numeric. Specify the number of principal components in the PCA to use
-in the downstream analysis. Default value is 20.}
+in the downstream analysis. Default value is NULL.}
 
 \item{reduceMethod}{A character, either "PCA" or "tSNE". Indicates using PCA or
 tSNE method to do dimension reduction.}
