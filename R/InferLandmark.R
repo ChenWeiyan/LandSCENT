@@ -212,7 +212,7 @@ InferLandmark <- function(Integration.l,
     ### select genes over which to cluster
     if (is.null(Integration.l$coordinates)) {
         
-        tmp.m <- exp.m
+        tmp.m <- exp.m - rowMeans(exp.m)
         
         num_cell <- ncol(tmp.m)
         if (is.null(Component_use)) {
@@ -250,7 +250,7 @@ InferLandmark <- function(Integration.l,
         ### do dimension reduction
         if (reduceMethod == "tSNE") {
             print("Do dimension reduction via tSNE")
-            pca.o <- irlba::prcomp_irlba(t(exp.m), n = rmtDim, 
+            pca.o <- irlba::prcomp_irlba(t(tmp.m), n = rmtDim, 
                                          center = TRUE)
             irlba_pca_res <- pca.o$x
             tsne_res <- Rtsne::Rtsne(as.matrix(irlba_pca_res), dims = 2, 
