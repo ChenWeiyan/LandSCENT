@@ -47,7 +47,7 @@ How to prepare these inputs for using in `LandSCENT` will be described in detail
 
 In this vignette we will use a previously defined PPI network to calculate all the example results. The specific PPI network we use here is derived from [Pathway Commons](www.pathwaycommons.org), which is an integrated resource collating together PPIs from several distinct sources. In particular, the network is constructed by integrating the following sources: the Human Protein Reference Database (HPRD), the [National Cancer Institute Nature Pathway Interaction Database (NCI-PID)](pid.nci.nih.gov), the Interactome (Intact) and the Molecular Interaction Database (MINT).
 
-We have stored the networks in the package. There are two versions of protein-protein interaction (PPI) network under filenames "ppiAsigH-PC2-17Jan2016.m.RData" and "hprdAsigH-13Jun12.m.RData"(early version). You can access these with the `data` function. Here we use the early version network:
+We have stored the networks in the package. There are two versions of protein-protein interaction (PPI) network under filenames "net17Jan2016.m.RData" and "net13Jun12.m.RData"(early version). You can access these with the `data` function. Here we use the early version network:
 
 ```{r load network information, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
 library(LandSCENT)
