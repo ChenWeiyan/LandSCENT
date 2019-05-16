@@ -22,7 +22,7 @@ colnames labeling genes (same gene identifier as in \code{exp.m})}
 matrix or not. Default is FALSE}
 }
 \value{
-A list of two or three objects:
+A list of two or four objects:
 
 expMC
 Reduced expression matrix with genes in the maximally connected subnetwork
@@ -32,6 +32,9 @@ Adjacency matrix of the maximally connected subnetwork
 
 data.sce/data.cds
 Orginal input sce/cds data objects
+
+data
+Normalized data matrix
 }
 \description{
 This function finds the common genes between the scRNA-Seq data matrix 

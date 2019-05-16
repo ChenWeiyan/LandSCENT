@@ -26,7 +26,7 @@
 #' A logical. Whether to do log-transformation on the input data
 #' matrix or not. Default is FALSE
 #' 
-#' @return A list of two or three objects:
+#' @return A list of two or four objects:
 #' 
 #' @return expMC
 #' Reduced expression matrix with genes in the maximally connected subnetwork
@@ -36,6 +36,9 @@
 #' 
 #' @return data.sce/data.cds
 #' Orginal input sce/cds data objects
+#' 
+#' @return data
+#' Normalized data matrix
 #'  
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
@@ -161,10 +164,10 @@ DoIntegPPI <- function(exp.m,
     expMC.m <- expPIN.m[maxc.idx,]
     
     if (data.class == "SingleCellExperiment") {
-        return(list(data.sce = exp.m, expMC = expMC.m, adjMC = adjMC.m))
+        return(list(data.sce = exp.m, expMC = expMC.m, adjMC = adjMC.m, data = data.m))
     }else if (data.class == "CellDataSet") {
-        return(list(data.cds = exp.m, expMC = expMC.m, adjMC = adjMC.m))
+        return(list(data.cds = exp.m, expMC = expMC.m, adjMC = adjMC.m, data = data.m))
     }else{
-        return(list(expMC = expMC.m, adjMC = adjMC.m))
+        return(list(expMC = expMC.m, adjMC = adjMC.m, data = data.m))
     }
 }

@@ -17,6 +17,12 @@
 
 \section{Version 0.99.2}{
   \itemize{
-    \item Create functions and update vignette.
+    \item Create new functions and update vignette.
+  }
+}
+
+\section{Version 0.99.3}{
+  \itemize{
+    \item Integrate diffusion maps to infer naive trajectory.
   }
 }
