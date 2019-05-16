@@ -11,7 +11,7 @@ Description: LandSCENT (Landscape Single Cell Entropy) is a R-package
 Date: 2019-1-23
 Author: Weiyan Chen, Andrew E Teschendorff
 Maintainer: Weiyan Chen <chenweiyan1208@gmail.com>
-Depends: R (>= 3.5)
+Depends: R (>= 3.6)
 Imports: cluster, corpcor, igraph, isva, mclust, parallel, stats,
         grDevices, graphics, marray, scater, Biobase, BiocGenerics,
         SummarizedExperiment, SingleCellExperiment, Rtsne, irlba,
