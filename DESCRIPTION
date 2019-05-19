@@ -8,14 +8,15 @@ Description: LandSCENT (Landscape Single Cell Entropy) is a R-package
         potency. LandSCENT also integrates cell density with potency 
         distribution to dissect cell types across all potency states 
         and generates high-quality figures to show this.
-Date: 2019-1-23
+Date: 2019-5-16
 Author: Weiyan Chen, Andrew E Teschendorff
 Maintainer: Weiyan Chen <chenweiyan1208@gmail.com>
 Depends: R (>= 3.6)
 Imports: cluster, corpcor, igraph, isva, mclust, parallel, stats,
         grDevices, graphics, marray, scater, Biobase, BiocGenerics,
         SummarizedExperiment, SingleCellExperiment, Rtsne, irlba,
-        plot3D, MASS, dbscan, monocle, DelayedArray, Matrix, destiny
+        plot3D, MASS, dbscan, monocle, DelayedArray, Matrix, destiny,
+        ggplot2
 Suggests: roxygen2, BiocStyle, knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 License: GPL-3
