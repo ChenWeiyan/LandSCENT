@@ -5,7 +5,8 @@
 #'  
 #' @description 
 #' This function constructs diffusion map with highly variable
-#' genes and visualize the result in 2D or 3D plots
+#' genes and identify the root cell with cell cluster and 
+#' signaling entropy rate
 #' 
 #' @param Integration.l
 #' Typically, it is the output from \code{InferLandmark} function

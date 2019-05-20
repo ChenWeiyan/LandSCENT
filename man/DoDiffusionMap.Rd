@@ -40,7 +40,8 @@ The index of root cell for generating diffusion map plots
 }
 \description{
 This function constructs diffusion map with highly variable
-genes and visualize the result in 2D or 3D plots
+genes and identify the root cell with cell cluster and 
+signaling entropy rate
 }
 \examples{
 \dontrun{
