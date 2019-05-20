@@ -25,11 +25,11 @@ At the time of writing, we tested on version 0.99.3.
 Operating system and dependencies
 ---------------------------------
 
-This package is developed on Linux under version 3.10.0-693.5.2.el7.x86\_64 and Red Hat 4.8.5-16.
+1. This package is developed on Linux under version 3.10.0-693.5.2.el7.x86\_64 and Red Hat 4.8.5-16.
 
-Using the most recent version of R is strongly recommended (R 3.6 at the time of writing).
+2. Using the most recent version of R is strongly recommended (R 3.6 at the time of writing).
 
-The following are several packages from CRAN and Bioconductor that `LandSCENT` uses:
+3. The following are several packages from CRAN and Bioconductor that `LandSCENT` uses:
 
 ``` r
 cluster (version >= 2.0.9), corpcor (version >= 1.6.9), igraph (version >= 1.2.4.1), isva (version >= 1.9), mclust (version >= 5.4.3), marray (version >= 1.62.0), scater (version >= 1.12.0), Biobase (version >= 2.44.0), BiocGenerics (version >= 0.30.0), SummarizedExperiment (version >= 1.14.0), SingleCellExperiment (version >= 1.6.0), Rtsne (version >= 0.15), irlba (version >= 2.3.3), plot3D (version >= 1.1.1), MASS(version >= 7.3-51.4), dbscan (version >= 1.1-3), monocle (version >= 2.12.0), DelayedArray (version >= 0.10.0), Matrix (version >= 1.2-17), destiny (version >= 2.14.0), ggplot2 (version >= 3.1.1)
