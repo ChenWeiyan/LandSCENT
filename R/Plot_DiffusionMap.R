@@ -85,10 +85,12 @@ Plot_DiffusionMap <- function(Integration.l,
   if (color_by == "SR") {
     color.idx <- Integration.l$SR
     color.lab <- "SR"
+    panel.text <- "Diffusion Map with SR values"
   }else{
     dpt <- destiny::DPT(dm, tips = Integration.l$root)
     color.idx <- dpt[["dpt"]]
     color.lab <- "DPT"
+    panel.text <- "Diffusion Map with DPT estimation"
   }
   
   labs <- colnames(dms)[dim]
@@ -101,7 +103,10 @@ Plot_DiffusionMap <- function(Integration.l,
     if (DIMS == 2) {
       g <- ggplot(dms, aes(dms[, dim[1]], dms[, dim[2]], color = color.idx)) +
         geom_point() +
-        theme(legend.position = "top") +
+        xlab(labs[1]) +
+        ylab(labs[2]) +
+        labs(title = panel.text) +
+        theme(legend.position = "right") +
         labs(color = color.lab)
       print(g)
     }else{
@@ -114,7 +119,8 @@ Plot_DiffusionMap <- function(Integration.l,
                ylab = labs[2],
                zlab = labs[3],
                clab = color.lab,
-               pch = 20)
+               pch = 20,
+               main = panel.text)
     }
     
     dev.off()
@@ -122,7 +128,10 @@ Plot_DiffusionMap <- function(Integration.l,
     if (DIMS == 2) {
       g <- ggplot(dms, aes(dms[, dim[1]], dms[, dim[2]], color = color.idx)) +
         geom_point() +
-        theme(legend.position = "top") +
+        xlab(labs[1]) +
+        ylab(labs[2]) +
+        labs(title = panel.text) +
+        theme(legend.position = "right") +
         labs(color = color.lab)
       print(g)
     }else{
@@ -135,7 +144,8 @@ Plot_DiffusionMap <- function(Integration.l,
                ylab = labs[2],
                zlab = labs[3],
                clab = color.lab,
-               pch = 20)
+               pch = 20,
+               main = panel.text)
     }
   }
 }
