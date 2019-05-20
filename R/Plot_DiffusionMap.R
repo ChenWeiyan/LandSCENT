@@ -72,6 +72,10 @@ Plot_DiffusionMap <- function(Integration.l,
   dm <- Integration.l$DM
   dms <- Integration.l$DMEigen
   DIM_dms <- dim(dms)[2]
+  
+  sign_dim <- sign(dim)
+  dim <- abs(dim)
+  
   DIMS <- max(dim)
   if (DIMS > DIM_dms) {
     stop("Diffusion map object does not contain enough dimensions, please reset dim argument!")
@@ -101,7 +105,7 @@ Plot_DiffusionMap <- function(Integration.l,
     par(mar = c(2,2,2,2))
     
     if (DIMS == 2) {
-      g <- ggplot(dms, aes(dms[, dim[1]], dms[, dim[2]], color = color.idx)) +
+      g <- ggplot(dms, aes((sign_dim[1]*dms[, dim[1]]), (sign_dim[2]*dms[, dim[2]]), color = color.idx)) +
         geom_point() +
         xlab(labs[1]) +
         ylab(labs[2]) +
@@ -110,9 +114,9 @@ Plot_DiffusionMap <- function(Integration.l,
         labs(color = color.lab)
       print(g)
     }else{
-      points3D(x = dms[, dim[1]], 
-               y = dms[, dim[2]], 
-               z = dms[, dim[3]], 
+      points3D(x = (sign_dim[1]*dms[, dim[1]]), 
+               y = (sign_dim[2]*dms[, dim[2]]), 
+               z = (sign_dim[3]*dms[, dim[3]]), 
                colvar = color.idx, 
                phi = phi, theta = theta, 
                xlab = labs[1],
@@ -126,7 +130,7 @@ Plot_DiffusionMap <- function(Integration.l,
     dev.off()
   }else{
     if (DIMS == 2) {
-      g <- ggplot(dms, aes(dms[, dim[1]], dms[, dim[2]], color = color.idx)) +
+      g <- ggplot(dms, aes((sign_dim[1]*dms[, dim[1]]), (sign_dim[2]*dms[, dim[2]]), color = color.idx)) +
         geom_point() +
         xlab(labs[1]) +
         ylab(labs[2]) +
@@ -135,9 +139,9 @@ Plot_DiffusionMap <- function(Integration.l,
         labs(color = color.lab)
       print(g)
     }else{
-      points3D(x = dms[, dim[1]], 
-               y = dms[, dim[2]], 
-               z = dms[, dim[3]], 
+      points3D(x = (sign_dim[1]*dms[, dim[1]]), 
+               y = (sign_dim[2]*dms[, dim[2]]), 
+               z = (sign_dim[3]*dms[, dim[3]]), 
                colvar = color.idx, 
                phi = phi, theta = theta, 
                xlab = labs[1],
