@@ -56,6 +56,25 @@
 #' If PDF is TRUE(default), then it will automatically generate a pdf file
 #' ploting cell density against potency states.
 #' 
+#' @examples 
+#' \dontrun{
+#' ### define a small network
+#' ppiA.m <- matrix(0,nrow=10,ncol=10)
+#' ppiA.m[1,] <- c(0,1,1,1,1)
+#' for(r in 2:nrow(ppiA.m)){
+#'   ppiA.m[r,1] <- 1
+#' }
+#' rownames(ppiA.m) <- paste("G",1:10,sep="")
+#' colnames(ppiA.m) <- paste("G",1:10,sep="")
+#' 
+#' ### define a positively valued expression matrix (20 genes x 10 samples)
+#' exp.m <- matrix(rpois(20*10,8),nrow=20,ncol=10)
+#' colnames(exp.m) <- paste("S",1:10,sep="")
+#' rownames(exp.m) <- paste("G",1:20,sep="")
+#' 
+#' DoLandSCENT.o <- DoLandSCENT(exp.m, ppiA.m, PLOT = FALSE, PDF = FALSE)
+#' }
+#' 
 #' @export
 #' 
 DoLandSCENT <- function(exp.m, 
