@@ -136,7 +136,7 @@ DoDiffusionMap <- function(Integration.l,
       clust.idx <- pam.o$cluster
     }else{
       distP.o <- as.dist( 0.5*(1-cor(exp.m[, high.idx])) )
-      pam.o <- cluster::pampam(distP.o, k = 3, stand = FALSE)
+      pam.o <- cluster::pam(distP.o, k = 3, stand = FALSE)
       clust.idx <- pam.o$cluster
     }
     ### seprate clusters
