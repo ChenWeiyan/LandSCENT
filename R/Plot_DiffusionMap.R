@@ -15,7 +15,8 @@
 #' means the plot is colored by diffusion pseudotime
 #' 
 #' @param dim
-#' A numeric vector. Diffusin components order in the plot axes.
+#' A numeric vector. Diffusin components order in the plot axes. And 
+#' the sign of evrey entry indicates the direction of component.
 #' Default is c(1, 2, 3)
 #' 
 #' @param phi
