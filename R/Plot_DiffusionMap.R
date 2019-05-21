@@ -73,7 +73,7 @@
 Plot_DiffusionMap <- function(Integration.l,
                               dim = c(1, 2, 3),
                               color_by = c("SR", "DPT"),
-                              TIPs = c(1,2,3),
+                              TIPs = c(1, 2, 3),
                               phi = 20,
                               theta = 30,
                               PDF = FALSE){
@@ -83,7 +83,11 @@ Plot_DiffusionMap <- function(Integration.l,
   
   dpt <- destiny::DPT(dm, tips = Integration.l$root)
   
+  terminel.idx <- which(dpt@tips[,1])
+  term.idx <- terminel.idx[which(terminel.idx != root.idx)]
+  
   sign_dim <- sign(dim)
+  dcs <- dim
   dim <- abs(dim)
   DIMS <- max(dim)
   DIM_dms <- dim(dms)[2]
@@ -128,12 +132,12 @@ Plot_DiffusionMap <- function(Integration.l,
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
                    label = "Root Cell", colour = "red", size = 3) +
-          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
-                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+          annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
                    label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
-          annotate("point", x = (sign_dim[1]*dms[which(dpt@tips[,1]), dim[1]]), 
-                   y = (sign_dim[2]*dms[which(dpt@tips[,1]), dim[2]]),
-                   pch = 1, colour = "red", size = rel(3)) +
+          annotate("point", x = (sign_dim[1]*dms[terminel.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[terminel.idx, dim[2]]),
+                   pch = 20, colour = "red", size = rel(3)) +
           scale_color_gradientn(colors = c("lightblue", "skyblue", "darkblue")) +
           theme_minimal() + 
           theme(legend.position = "right",
@@ -143,15 +147,15 @@ Plot_DiffusionMap <- function(Integration.l,
           ggthemes::geom_rangeframe(colour = par("col"))
       }else{
         range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
-        g <- plot(dpt, paths_to = TIPs) + 
+        g <- plot(dpt, dcs = dcs, paths_to = TIPs) + 
           labs(title = panel.text, color = color.lab) +
           xlab(labs[1]) +
           ylab(labs[2]) +
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
                    label = "Root Cell", colour = "red", size = 3) +
-          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
-                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+          annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
                    label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
           theme(panel.grid = element_blank(),
                 plot.title = element_text(hjust = 0.5))
@@ -184,12 +188,12 @@ Plot_DiffusionMap <- function(Integration.l,
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
                    label = "Root Cell", colour = "red", size = 3) +
-          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
-                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+          annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
                    label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
-          annotate("point", x = (sign_dim[1]*dms[which(dpt@tips[,1]), dim[1]]), 
-                   y = (sign_dim[2]*dms[which(dpt@tips[,1]), dim[2]]),
-                   pch = 1, colour = "red", size = rel(3)) +
+          annotate("point", x = (sign_dim[1]*dms[terminel.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[terminel.idx, dim[2]]),
+                   pch = 20, colour = "red", size = rel(3)) +
           scale_color_gradientn(colors = c("lightblue", "skyblue", "darkblue")) +
           theme_minimal() + 
           theme(legend.position = "right",
@@ -199,15 +203,15 @@ Plot_DiffusionMap <- function(Integration.l,
           ggthemes::geom_rangeframe(colour = par("col"))
       }else{
         range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
-        g <- plot(dpt, paths_to = TIPs) + 
+        g <- plot(dpt, dcs = dcs, paths_to = TIPs) + 
           labs(title = panel.text, color = color.lab) +
           xlab(labs[1]) +
           ylab(labs[2]) +
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
                    label = "Root Cell", colour = "red", size = 3) +
-          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
-                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+          annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
                    label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
           theme(panel.grid = element_blank(),
                 plot.title = element_text(hjust = 0.5))
