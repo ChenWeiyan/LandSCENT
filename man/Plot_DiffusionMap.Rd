@@ -5,7 +5,7 @@
 \title{Visualize diffusion map}
 \usage{
 Plot_DiffusionMap(Integration.l, dim = c(1, 2, 3), color_by = c("SR",
-  "DPT"), phi = 20, theta = 30, PDF = FALSE)
+  "DPT"), TIPs = c(1, 2, 3), phi = 20, theta = 30, PDF = FALSE)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{DoDiffusionMap} function}
@@ -17,6 +17,10 @@ Default is c(1, 2, 3)}
 \item{color_by}{Indicating the variable used for coloring. \code{SR}
 means the plot is colored by SR values. \code{DPT}
 means the plot is colored by diffusion pseudotime}
+
+\item{TIPs}{Specifying which trajectory paths should be shown on the 
+diffusion maps. Only available in 2D plot and when 
+\code{color_by} was set to be \code{DPT}}
 
 \item{phi}{The angles defining the viewing direction. \code{phi} 
 gives the colatitude. Default is 20}

@@ -9,15 +9,20 @@
 #' @param Integration.l
 #' Typically, it is the output from \code{DoDiffusionMap} function
 #' 
+#' @param dim
+#' A numeric vector. Diffusin components order in the plot axes. And 
+#' the sign of evrey entry indicates the direction of component.
+#' Default is c(1, 2, 3)
+#' 
 #' @param color_by
 #' Indicating the variable used for coloring. \code{SR}
 #' means the plot is colored by SR values. \code{DPT}
 #' means the plot is colored by diffusion pseudotime
 #' 
-#' @param dim
-#' A numeric vector. Diffusin components order in the plot axes. And 
-#' the sign of evrey entry indicates the direction of component.
-#' Default is c(1, 2, 3)
+#' @param TIPs
+#' Specifying which trajectory paths should be shown on the 
+#' diffusion maps. Only available in 2D plot and when 
+#' \code{color_by} was set to be \code{DPT}
 #' 
 #' @param phi
 #' The angles defining the viewing direction. \code{phi} 
@@ -62,22 +67,26 @@
 #' @import ggplot2
 #' @import plot3D
 #' @importFrom destiny DPT
+#' @importFrom ggthemes geom_rangeframe
 #' @export
 #'     
 Plot_DiffusionMap <- function(Integration.l,
                               dim = c(1, 2, 3),
                               color_by = c("SR", "DPT"),
+                              TIPs = c(1,2,3),
                               phi = 20,
                               theta = 30,
                               PDF = FALSE){
   dm <- Integration.l$DM
   dms <- Integration.l$DMEigen
-  DIM_dms <- dim(dms)[2]
+  root.idx <- Integration.l$root
+  
+  dpt <- destiny::DPT(dm, tips = Integration.l$root)
   
   sign_dim <- sign(dim)
   dim <- abs(dim)
-  
   DIMS <- max(dim)
+  DIM_dms <- dim(dms)[2]
   if (DIMS > DIM_dms) {
     stop("Diffusion map object does not contain enough dimensions, please reset dim argument!")
   }
@@ -92,7 +101,6 @@ Plot_DiffusionMap <- function(Integration.l,
     color.lab <- "SR"
     panel.text <- "Diffusion Map with SR values"
   }else{
-    dpt <- destiny::DPT(dm, tips = Integration.l$root)
     color.idx <- dpt[["dpt"]]
     color.lab <- "DPT"
     panel.text <- "Diffusion Map with DPT estimation"
@@ -101,18 +109,53 @@ Plot_DiffusionMap <- function(Integration.l,
   labs <- colnames(dms)[dim]
   DIMS <- length(dim)
   
+  if (DIMS > 3) {
+    stop("dim is of wrong length: Can only handle 2 or 3 dimensions!")
+  }
+  
   if (PDF) {
     pdf("DiffusionMap.pdf")
     par(mar = c(2,2,2,2))
     
     if (DIMS == 2) {
-      g <- ggplot(dms, aes((sign_dim[1]*dms[, dim[1]]), (sign_dim[2]*dms[, dim[2]]), color = color.idx)) +
-        geom_point() +
-        xlab(labs[1]) +
-        ylab(labs[2]) +
-        labs(title = panel.text) +
-        theme(legend.position = "right") +
-        labs(color = color.lab)
+      if (color_by == "SR") {
+        range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
+        g <- ggplot(dms, aes((sign_dim[1]*dms[, dim[1]]), (sign_dim[2]*dms[, dim[2]]), color = color.idx)) +
+          geom_point() +
+          xlab(labs[1]) +
+          ylab(labs[2]) +
+          labs(title = panel.text, color = color.lab) +
+          annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
+                   label = "Root Cell", colour = "red", size = 3) +
+          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
+                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+          annotate("point", x = (sign_dim[1]*dms[which(dpt@tips[,1]), dim[1]]), 
+                   y = (sign_dim[2]*dms[which(dpt@tips[,1]), dim[2]]),
+                   pch = 1, colour = "red", size = rel(3)) +
+          scale_color_gradientn(colors = c("lightblue", "skyblue", "darkblue")) +
+          theme_minimal() + 
+          theme(legend.position = "right",
+                panel.grid = element_blank(),
+                plot.title = element_text(hjust = 0.5),
+                axis.text = element_blank())+
+          ggthemes::geom_rangeframe(colour = par("col"))
+      }else{
+        range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
+        g <- plot(dpt, paths_to = TIPs) + 
+          labs(title = panel.text, color = color.lab) +
+          xlab(labs[1]) +
+          ylab(labs[2]) +
+          annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
+                   label = "Root Cell", colour = "red", size = 3) +
+          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
+                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+          theme(panel.grid = element_blank(),
+                plot.title = element_text(hjust = 0.5))
+      }
       print(g)
     }else{
       points3D(x = (sign_dim[1]*dms[, dim[1]]), 
@@ -131,13 +174,44 @@ Plot_DiffusionMap <- function(Integration.l,
     dev.off()
   }else{
     if (DIMS == 2) {
-      g <- ggplot(dms, aes((sign_dim[1]*dms[, dim[1]]), (sign_dim[2]*dms[, dim[2]]), color = color.idx)) +
-        geom_point() +
-        xlab(labs[1]) +
-        ylab(labs[2]) +
-        labs(title = panel.text) +
-        theme(legend.position = "right") +
-        labs(color = color.lab)
+      if (color_by == "SR") {
+        range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
+        g <- ggplot(dms, aes((sign_dim[1]*dms[, dim[1]]), (sign_dim[2]*dms[, dim[2]]), color = color.idx)) +
+          geom_point() +
+          xlab(labs[1]) +
+          ylab(labs[2]) +
+          labs(title = panel.text, color = color.lab) +
+          annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
+                   label = "Root Cell", colour = "red", size = 3) +
+          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
+                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+          annotate("point", x = (sign_dim[1]*dms[which(dpt@tips[,1]), dim[1]]), 
+                   y = (sign_dim[2]*dms[which(dpt@tips[,1]), dim[2]]),
+                   pch = 1, colour = "red", size = rel(3)) +
+          scale_color_gradientn(colors = c("lightblue", "skyblue", "darkblue")) +
+          theme_minimal() + 
+          theme(legend.position = "right",
+                panel.grid = element_blank(),
+                plot.title = element_text(hjust = 0.5),
+                axis.text = element_blank())+
+          ggthemes::geom_rangeframe(colour = par("col"))
+      }else{
+        range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
+        g <- plot(dpt, paths_to = TIPs) + 
+          labs(title = panel.text, color = color.lab) +
+          xlab(labs[1]) +
+          ylab(labs[2]) +
+          annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
+                   y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
+                   label = "Root Cell", colour = "red", size = 3) +
+          annotate("text", x = (sign_dim[1]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[1]]), 
+                   y = (sign_dim[2]*dms[which(dpt@tips[-root.idx,1]) + 1, dim[2]]) - (0.05 * range_y),
+                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+          theme(panel.grid = element_blank(),
+                plot.title = element_text(hjust = 0.5))
+      }
       print(g)
     }else{
       points3D(x = (sign_dim[1]*dms[, dim[1]]), 
