@@ -67,6 +67,7 @@
 #' @import ggplot2
 #' @import plot3D
 #' @importFrom destiny DPT
+#' @importFrom destiny plot
 #' @importFrom ggthemes geom_rangeframe
 #' @export
 #'     
@@ -150,7 +151,7 @@ Plot_DiffusionMap <- function(Integration.l,
           ggthemes::geom_rangeframe(colour = par("col"))
       }else{
         range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
-        g <- plot(dpt, dcs = dcs, paths_to = TIPs) + 
+        g <- destiny::plot(dpt, dcs = dcs, paths_to = TIPs) + 
           labs(title = panel.text, color = color.lab) +
           xlab(labs[1]) +
           ylab(labs[2]) +
@@ -210,7 +211,7 @@ Plot_DiffusionMap <- function(Integration.l,
           ggthemes::geom_rangeframe(colour = par("col"))
       }else{
         range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
-        g <- plot(dpt, dcs = dcs, paths_to = TIPs) + 
+        g <- destiny::plot(dpt, dcs = dcs, paths_to = TIPs) + 
           labs(title = panel.text, color = color.lab) +
           xlab(labs[1]) +
           ylab(labs[2]) +
