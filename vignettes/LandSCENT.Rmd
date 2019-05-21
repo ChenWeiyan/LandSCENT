@@ -19,7 +19,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r vignette-options, echo=FALSE, message=FALSE, warning=FALSE}
 require(BiocStyle)
 ```
@@ -109,11 +109,11 @@ counts(example.sce) <- as(counts(example.sce), "dgCMatrix")
 example.sce <- calculateQCMetrics(example.sce, feature_controls=list(Spike=is.spike, Mt=is.mito))
 
 ### Cell Filtering wih isOutlier function
- 
+
 libsize.drop <- isOutlier(example.sce$total_counts, nmads=5, type="lower", log=TRUE);
 mito.drop <- isOutlier(example.sce$pct_counts_Mt, nmads=5, type="higher");
 spike.drop <- isOutlier(example.sce$pct_counts_Spike, nmads=5, type="higher");
- 
+
 filter_example.sce <- example.sce[, !(libsize.drop | mito.drop | spike.drop)]
 phenoExample.v <- phenoExample.v[!(libsize.drop | mito.drop | spike.drop)]
 data.frame(ByLibSize=sum(libsize.drop), ByMito=sum(mito.drop), 
@@ -150,15 +150,15 @@ In our example, rownames of the data matrix are all **human** gene symbols. So w
 require(AnnotationDbi)
 require(org.Hs.eg.db)
 anno.v <- mapIds(org.Hs.eg.db, keys = rownames(example.m), keytype = "SYMBOL", 
-               column = "ENTREZID", multiVals = "first")
+                 column = "ENTREZID", multiVals = "first")
 unique_anno.v <- unique(anno.v)
 example_New.m <- matrix(0, nrow = length(unique_anno.v), ncol = dim(example.m)[2])
 for (i in seq_len(length(unique_anno.v))) {
-    tmp <- example.m[which(anno.v == unique_anno.v[i]) ,]
-    if (!is.null(dim(tmp))) {
-        tmp <- colSums(tmp) / dim(tmp)[1]
-    }
-    example_New.m[i ,] <- example_New.m[i ,] + tmp
+  tmp <- example.m[which(anno.v == unique_anno.v[i]) ,]
+  if (!is.null(dim(tmp))) {
+    tmp <- colSums(tmp) / dim(tmp)[1]
+  }
+  example_New.m[i ,] <- example_New.m[i ,] + tmp
 }
 rownames(example_New.m) <- unique_anno.v
 colnames(example_New.m) <- colnames(example.m)
@@ -424,7 +424,9 @@ In case you do not like the way we generate the plot or you want to add some oth
 
 ### `Plot_DiffusionMap` function
 
-This function is quite straightfoward. With aforementioned result `DoDiffusionMap.o`, one can easily run it with:
+This function is quite straightfoward. With aforementioned result `DoDiffusionMap.o`, one can easily run it with the following commands:
+
+The default set of `Plot_DiffusionMap` would give you a 3D version figure.
 
 ```{r Plot_DiffusionMap1 , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 Plot_DiffusionMap(DoDiffusionMap.o,
@@ -436,16 +438,21 @@ Plot_DiffusionMap(DoDiffusionMap.o,
 
 ![](SR.png)
 
-There two **NOTES** need to be addressed:
+There three **NOTES** need to be addressed:
 
-1. For argument **dim**, this is a vector virable. It indicates **which** dimension to use and in what **order**. For example, *dim = c(1,2,3)* means use diffusion component 1,2 and 3 to generrate figures, and the x-axis relates to DC1, y-axis relates to DC2 and z-axis relates to DC3. While *dim = c(2,3,5)* means x-axis relates to DC2, y-axis relates to DC3 and z-axis relates to DC5. More Importantly, the signs of elements in *dim* indicate the direction of diffusion components. For example, **dim = c(2,3,-5)** means x-axis relates to DC2, y-axis relates to DC3 and z-axis relates to **-DC5**. Moreover, if the maximum dimension you choose here is larger than *num_comp* in `DoDiffusionMap` function, the plot would fail.
+1. For argument **dim**, this is a vector virable. It indicates **which** dimension to use and in what **order**. For example, *dim = c(1,2,3)* means use diffusion component 1,2 and 3 to generrate figures, and the x-axis relates to DC1, y-axis relates to DC2 and z-axis relates to DC3. While *dim = c(2,3,5)* means x-axis relates to DC2, y-axis relates to DC3 and z-axis relates to DC5. More Importantly, If you specify negative numbers in *dim* (e.g. **dim = c(2,3,-5)**), then the corresponding **DC5** will be flipped. Moreover, if the maximum dimension you choose here is larger than *num_comp* in `DoDiffusionMap` function, the plot would fail.
 2. We provide an option in **color_by** to be **DPT**, which gives a diffusion pseudotime(DPT) estimation. In some cases, like the cell number is too little, or the cell clusters are seprated too far with each other, the estimation may fail. So before you generate the figure with *DPT*, you may need to look into the diffusion map itself, and make sure the DPT estimation could be carry out correctly.
+3. In the 2D version figure, we employed `ggplot2` to generate the figure. So it will be convient for you to add some customized feature with `ggplot2` library functions. As we have shown in the following:
 
 ```{r Plot_DiffusionMap2 , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 Plot_DiffusionMap(DoDiffusionMap.o,
                   dim = c(1, 2),
                   color_by = "DPT",
-                  PDF = FALSE)
+                  TIPs = c(1, 2, 3),
+                  PDF = FALSE) +
+  annotate("text", x = -0.02, y = -0.007, label = "Basal", size = 7) +
+  annotate("text", x = 0.013, y = 0.053, label = "Lum2", size = 7) +
+  annotate("text", x = 0.013, y = -0.023, label = "Lum1", size = 7)
 ```
 
 ![](DPT.png)

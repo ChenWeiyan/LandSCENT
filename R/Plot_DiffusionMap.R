@@ -112,6 +112,7 @@ Plot_DiffusionMap <- function(Integration.l,
   
   labs <- colnames(dms)[dim]
   DIMS <- length(dim)
+  font.size <- 3.5
   
   if (DIMS > 3) {
     stop("dim is of wrong length: Can only handle 2 or 3 dimensions!")
@@ -131,10 +132,12 @@ Plot_DiffusionMap <- function(Integration.l,
           labs(title = panel.text, color = color.lab) +
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
-                   label = "Root Cell", colour = "red", size = 3) +
+                   label = "Root Cell", 
+                   fontface = "bold", colour = "red", size = font.size) +
           annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
-                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
-                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) + (0.07 * range_y),
+                   label = "Predicted \nTerminal \nCell ", 
+                   fontface = "bold", colour = "red", size = font.size) + 
           annotate("point", x = (sign_dim[1]*dms[terminel.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[terminel.idx, dim[2]]),
                    pch = 20, colour = "red", size = rel(3)) +
@@ -153,10 +156,12 @@ Plot_DiffusionMap <- function(Integration.l,
           ylab(labs[2]) +
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
-                   label = "Root Cell", colour = "red", size = 3) +
+                   label = "Root Cell", 
+                   fontface = "bold", colour = "red", size = font.size) +
           annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
-                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
-                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) + (0.07 * range_y),
+                   label = "Predicted \nTerminal \nCell ", 
+                   fontface = "bold", colour = "red", size = font.size) + 
           theme(panel.grid = element_blank(),
                 plot.title = element_text(hjust = 0.5))
       }
@@ -187,10 +192,12 @@ Plot_DiffusionMap <- function(Integration.l,
           labs(title = panel.text, color = color.lab) +
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
-                   label = "Root Cell", colour = "red", size = 3) +
+                   label = "Root Cell", 
+                   fontface = "bold", colour = "red", size = font.size) +
           annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
-                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
-                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) + (0.07 * range_y),
+                   label = "Predicted \nTerminal \nCell ", 
+                   fontface = "bold", colour = "red", size = font.size) + 
           annotate("point", x = (sign_dim[1]*dms[terminel.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[terminel.idx, dim[2]]),
                    pch = 20, colour = "red", size = rel(3)) +
@@ -209,10 +216,12 @@ Plot_DiffusionMap <- function(Integration.l,
           ylab(labs[2]) +
           annotate("text", x = (sign_dim[1]*dms[root.idx, dim[1]]), 
                    y = (sign_dim[2]*dms[root.idx, dim[2]]) - (0.03 * range_y),
-                   label = "Root Cell", colour = "red", size = 3) +
+                   label = "Root Cell", 
+                   fontface = "bold", colour = "red", size = font.size) +
           annotate("text", x = (sign_dim[1]*dms[term.idx, dim[1]]), 
-                   y = (sign_dim[2]*dms[term.idx, dim[2]]) - (0.05 * range_y),
-                   label = "Predicted \nTerminal \nCell ", colour = "red", size = 3) + 
+                   y = (sign_dim[2]*dms[term.idx, dim[2]]) + (0.07 * range_y),
+                   label = "Predicted \nTerminal \nCell ", 
+                   fontface = "bold", colour = "red", size = font.size) + 
           theme(panel.grid = element_blank(),
                 plot.title = element_text(hjust = 0.5))
       }
