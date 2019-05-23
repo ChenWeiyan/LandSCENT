@@ -26,11 +26,11 @@
 #' 
 #' @param phi
 #' The angles defining the viewing direction. \code{phi} 
-#' gives the colatitude. Default is 0
+#' gives the colatitude. Default is 20
 #' 
 #' @param theta
 #' The angles defining the viewing direction. \code{theta} 
-#' gives the azimuthal direction. Default is -40
+#' gives the azimuthal direction. Default is 40
 #' 
 #' @param bty
 #' The type of the box, the default \code{g} draws grey 
