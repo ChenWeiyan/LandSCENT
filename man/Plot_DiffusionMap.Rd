@@ -5,7 +5,8 @@
 \title{Visualize diffusion map}
 \usage{
 Plot_DiffusionMap(Integration.l, dim = c(1, 2, 3), color_by = c("SR",
-  "DPT"), TIPs = c(1, 2, 3), phi = 20, theta = 30, PDF = FALSE)
+  "DPT"), TIPs = c(1, 2, 3), phi = 0, theta = -40, bty = "g", ...,
+  PDF = FALSE)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{DoDiffusionMap} function}
@@ -23,15 +24,22 @@ diffusion maps. Only available in 2D plot and when
 \code{color_by} was set to be \code{DPT}}
 
 \item{phi}{The angles defining the viewing direction. \code{phi} 
-gives the colatitude. Default is 20}
+gives the colatitude. Default is 0}
 
 \item{theta}{The angles defining the viewing direction. \code{theta} 
-gives the azimuthal direction. Default is 30}
+gives the azimuthal direction. Default is -40}
+
+\item{bty}{The type of the box, the default \code{g} draws grey 
+background with white grid lines.
+Note: the bty = "f", "b", "b2", "bl" can also be specified
+for this argument}
+
+\item{...}{Additional arguments passed to the 3D plotting methods}
 
 \item{PDF}{A logical. Output figure via pdf file or not, default is FALSE}
 }
 \value{
-A pdf file contains the generated figures
+A pdf file contains the generated figures or a ggplot object
 }
 \description{
 This function visualizes the diffusion map in 2D or 3D plots

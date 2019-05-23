@@ -26,16 +26,25 @@
 #' 
 #' @param phi
 #' The angles defining the viewing direction. \code{phi} 
-#' gives the colatitude. Default is 20
+#' gives the colatitude. Default is 0
 #' 
 #' @param theta
 #' The angles defining the viewing direction. \code{theta} 
-#' gives the azimuthal direction. Default is 30
+#' gives the azimuthal direction. Default is -40
+#' 
+#' @param bty
+#' The type of the box, the default \code{g} draws grey 
+#' background with white grid lines.
+#' Note: the bty = "f", "b", "b2", "bl" can also be specified
+#' for this argument
+#' 
+#' @param ...
+#' Additional arguments passed to the 3D plotting methods
 #' 
 #' @param PDF
 #' A logical. Output figure via pdf file or not, default is FALSE
 #' 
-#' @return A pdf file contains the generated figures
+#' @return A pdf file contains the generated figures or a ggplot object
 #' 
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
@@ -69,14 +78,17 @@
 #' @importFrom destiny DPT
 #' @importFrom destiny plot
 #' @importFrom ggthemes geom_rangeframe
+#' @importFrom marray maPalette
 #' @export
 #'     
 Plot_DiffusionMap <- function(Integration.l,
                               dim = c(1, 2, 3),
                               color_by = c("SR", "DPT"),
                               TIPs = c(1, 2, 3),
-                              phi = 20,
-                              theta = 30,
+                              phi = 0,
+                              theta = -40,
+                              bty = "g",
+                              ...,
                               PDF = FALSE){
   dm <- Integration.l$DM
   dms <- Integration.l$DMEigen
@@ -101,14 +113,29 @@ Plot_DiffusionMap <- function(Integration.l,
     color_by <- color_by[1]
   }
   
+  colSR <- marray::maPalette(low="lightblue",
+                             mid="skyblue",
+                             high="darkblue",
+                             k = 20)
+  colDPT <- marray::maPalette(low="#ffffb2",
+                              mid="#fd8d3c",
+                              high="#b10026",
+                              k = 20)
+  point.SR <- "#d73027"
+  point.DPT <- "#3690c0"
+  
   if (color_by == "SR") {
     color.idx <- Integration.l$SR
     color.lab <- "SR"
     panel.text <- "Diffusion Map with SR values"
+    colimage <- colSR
+    point.col <- point.SR
   }else{
     color.idx <- dpt[["dpt"]]
     color.lab <- "DPT"
     panel.text <- "Diffusion Map with DPT estimation"
+    colimage <- colDPT
+    point.col <- point.DPT
   }
   
   labs <- colnames(dms)[dim]
@@ -168,17 +195,55 @@ Plot_DiffusionMap <- function(Integration.l,
       }
       print(g)
     }else{
+      range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
       points3D(x = (sign_dim[1]*dms[, dim[1]]), 
                y = (sign_dim[2]*dms[, dim[2]]), 
                z = (sign_dim[3]*dms[, dim[3]]), 
                colvar = color.idx, 
+               col = colimage,
+               colkey = list(length = 0.3),
                phi = phi, theta = theta, 
                xlab = labs[1],
                ylab = labs[2],
                zlab = labs[3],
                clab = color.lab,
                pch = 20,
-               main = panel.text)
+               main = panel.text,
+               bty = bty,
+               ...)
+      points3D(x = (sign_dim[1]*dms[root.idx, dim[1]]),
+               y = (sign_dim[2]*dms[root.idx, dim[2]]),
+               z = (sign_dim[3]*dms[root.idx, dim[3]]),
+               col = point.col,
+               pch = 2,
+               cex = 1.5,
+               plot = TRUE,
+               add = TRUE)
+      points3D(x = (sign_dim[1]*dms[term.idx, dim[1]]),
+               y = (sign_dim[2]*dms[term.idx, dim[2]]),
+               z = (sign_dim[3]*dms[term.idx, dim[3]]),
+               col = point.col,
+               pch = 5,
+               cex = 1.5,
+               plot = TRUE,
+               add = TRUE)
+      text3D(x = (sign_dim[1]*dms[term.idx, dim[1]]),
+             y = (sign_dim[2]*dms[term.idx, dim[2]]),
+             z = (sign_dim[3]*dms[term.idx, dim[3]]),
+             labels = rep("    Predicted \n    Terminal \n    Cell",
+                          length(term.idx)),
+             col = point.col,
+             cex = 0.8,
+             plot = TRUE,
+             add = TRUE)
+      text3D(x = (sign_dim[1]*dms[root.idx, dim[1]]),
+             y = (sign_dim[2]*dms[root.idx, dim[2]]),
+             z = (sign_dim[3]*dms[root.idx, dim[3]]),
+             labels = "    Root Cell",
+             col = point.col,
+             cex = 0.8,
+             plot = TRUE,
+             add = TRUE)
     }
     
     dev.off()
@@ -228,17 +293,55 @@ Plot_DiffusionMap <- function(Integration.l,
       }
       print(g)
     }else{
+      range_y <- max(dms[, dim[2]]) - min(dms[, dim[2]])
       points3D(x = (sign_dim[1]*dms[, dim[1]]), 
                y = (sign_dim[2]*dms[, dim[2]]), 
                z = (sign_dim[3]*dms[, dim[3]]), 
                colvar = color.idx, 
+               col = colimage,
+               colkey = list(length = 0.3),
                phi = phi, theta = theta, 
                xlab = labs[1],
                ylab = labs[2],
                zlab = labs[3],
                clab = color.lab,
                pch = 20,
-               main = panel.text)
+               main = panel.text,
+               bty = bty,
+               ...)
+      points3D(x = (sign_dim[1]*dms[root.idx, dim[1]]),
+               y = (sign_dim[2]*dms[root.idx, dim[2]]),
+               z = (sign_dim[3]*dms[root.idx, dim[3]]),
+               col = point.col,
+               pch = 2,
+               cex = 1.5,
+               plot = TRUE,
+               add = TRUE)
+      points3D(x = (sign_dim[1]*dms[term.idx, dim[1]]),
+               y = (sign_dim[2]*dms[term.idx, dim[2]]),
+               z = (sign_dim[3]*dms[term.idx, dim[3]]),
+               col = point.col,
+               pch = 5,
+               cex = 1.5,
+               plot = TRUE,
+               add = TRUE)
+      text3D(x = (sign_dim[1]*dms[term.idx, dim[1]]),
+             y = (sign_dim[2]*dms[term.idx, dim[2]]),
+             z = (sign_dim[3]*dms[term.idx, dim[3]]),
+             labels = rep("    Predicted \n    Terminal \n    Cell",
+                          length(term.idx)),
+             col = point.col,
+             cex = 0.8,
+             plot = TRUE,
+             add = TRUE)
+      text3D(x = (sign_dim[1]*dms[root.idx, dim[1]]),
+             y = (sign_dim[2]*dms[root.idx, dim[2]]),
+             z = (sign_dim[3]*dms[root.idx, dim[3]]),
+             labels = "    Root Cell",
+             col = point.col,
+             cex = 0.8,
+             plot = TRUE,
+             add = TRUE)
     }
   }
 }
