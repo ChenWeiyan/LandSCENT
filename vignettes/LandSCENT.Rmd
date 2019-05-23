@@ -426,17 +426,21 @@ In case you do not like the way we generate the plot or you want to add some oth
 
 This function is quite straightfoward. With aforementioned result `DoDiffusionMap.o`, one can easily run it with the following commands:
 
-The default set of `Plot_DiffusionMap` would give you a 3D version figure.
+The default set of `Plot_DiffusionMap` would give you a 3D version figure. This function estimates diffusion pseudotime from the diffusion maps constructed from `DoDiffusionMap`. So you could choose to color the cells by its *SR values* or *diffusion pseudotime(DPT)* with **color_by** parameter.
 
 ```{r Plot_DiffusionMap1 , eval=FALSE, echo=TRUE, message=FALSE, warning=FALSE}
 Plot_DiffusionMap(DoDiffusionMap.o,
                   dim = c(1, 2, 3),
                   color_by = "SR",
-                  phi = 20, theta = 30,
+                  phi = 40,
+                  theta = 135,
+                  bty = "g",
                   PDF = FALSE)
 ```
 
 ![](SR.png)
+
+In the figure, `Plot_DiffusionMap` automatically highlights the root cell and predicted terminal cells. And we provide two arguments *phi* and *theta* to tune the angel in order to have a better view.
 
 There three **NOTES** need to be addressed:
 

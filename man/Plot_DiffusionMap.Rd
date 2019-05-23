@@ -5,7 +5,7 @@
 \title{Visualize diffusion map}
 \usage{
 Plot_DiffusionMap(Integration.l, dim = c(1, 2, 3), color_by = c("SR",
-  "DPT"), TIPs = c(1, 2, 3), phi = 0, theta = -40, bty = "g", ...,
+  "DPT"), TIPs = c(1, 2, 3), phi = 20, theta = 40, bty = "g", ...,
   PDF = FALSE)
 }
 \arguments{
@@ -39,7 +39,7 @@ for this argument}
 \item{PDF}{A logical. Output figure via pdf file or not, default is FALSE}
 }
 \value{
-A pdf file contains the generated figures or a ggplot object
+A pdf file contains the generated figure or a ggplot object
 }
 \description{
 This function visualizes the diffusion map in 2D or 3D plots

@@ -44,7 +44,7 @@
 #' @param PDF
 #' A logical. Output figure via pdf file or not, default is FALSE
 #' 
-#' @return A pdf file contains the generated figures or a ggplot object
+#' @return A pdf file contains the generated figure or a ggplot object
 #' 
 #' @references 
 #' Teschendorff AE, Tariq Enver. 
@@ -85,8 +85,8 @@ Plot_DiffusionMap <- function(Integration.l,
                               dim = c(1, 2, 3),
                               color_by = c("SR", "DPT"),
                               TIPs = c(1, 2, 3),
-                              phi = 0,
-                              theta = -40,
+                              phi = 20,
+                              theta = 40,
                               bty = "g",
                               ...,
                               PDF = FALSE){
@@ -116,24 +116,24 @@ Plot_DiffusionMap <- function(Integration.l,
   colSR <- marray::maPalette(low="lightblue",
                              mid="skyblue",
                              high="darkblue",
-                             k = 20)
+                             k = 30)
   colDPT <- marray::maPalette(low="#ffffb2",
                               mid="#fd8d3c",
                               high="#b10026",
-                              k = 20)
+                              k = 30)
   point.SR <- "#d73027"
   point.DPT <- "#3690c0"
   
   if (color_by == "SR") {
     color.idx <- Integration.l$SR
     color.lab <- "SR"
-    panel.text <- "Diffusion Map with SR values"
+    panel.text <- "Diffusion Map Colored by SR Values"
     colimage <- colSR
     point.col <- point.SR
   }else{
     color.idx <- dpt[["dpt"]]
     color.lab <- "DPT"
-    panel.text <- "Diffusion Map with DPT estimation"
+    panel.text <- "Diffusion Map Colored by DPT Estimation"
     colimage <- colDPT
     point.col <- point.DPT
   }
@@ -230,10 +230,11 @@ Plot_DiffusionMap <- function(Integration.l,
       text3D(x = (sign_dim[1]*dms[term.idx, dim[1]]),
              y = (sign_dim[2]*dms[term.idx, dim[2]]),
              z = (sign_dim[3]*dms[term.idx, dim[3]]),
-             labels = rep("    Predicted \n    Terminal \n    Cell",
+             labels = rep("    Predicted\n    Terminal\n    Cell",
                           length(term.idx)),
              col = point.col,
              cex = 0.8,
+             font = 2,
              plot = TRUE,
              add = TRUE)
       text3D(x = (sign_dim[1]*dms[root.idx, dim[1]]),
@@ -242,6 +243,7 @@ Plot_DiffusionMap <- function(Integration.l,
              labels = "    Root Cell",
              col = point.col,
              cex = 0.8,
+             font = 2,
              plot = TRUE,
              add = TRUE)
     }
@@ -328,10 +330,11 @@ Plot_DiffusionMap <- function(Integration.l,
       text3D(x = (sign_dim[1]*dms[term.idx, dim[1]]),
              y = (sign_dim[2]*dms[term.idx, dim[2]]),
              z = (sign_dim[3]*dms[term.idx, dim[3]]),
-             labels = rep("    Predicted \n    Terminal \n    Cell",
+             labels = rep("    Predicted\n    Terminal\n    Cell",
                           length(term.idx)),
              col = point.col,
              cex = 0.8,
+             font = 2,
              plot = TRUE,
              add = TRUE)
       text3D(x = (sign_dim[1]*dms[root.idx, dim[1]]),
@@ -340,6 +343,7 @@ Plot_DiffusionMap <- function(Integration.l,
              labels = "    Root Cell",
              col = point.col,
              cex = 0.8,
+             font = 2,
              plot = TRUE,
              add = TRUE)
     }
