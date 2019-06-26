@@ -94,15 +94,7 @@ Plot_DiffusionMap <- function(Integration.l,
   dms <- Integration.l$DMEigen
   root.idx <- Integration.l$root
   
-  if (is.null(Integration.l$DPT)) {
-    dpt <- destiny::DPT(dm, tips = Integration.l$root)
-    Integration.l$DPT <- dpt
-  }else if (!identical(Integration.l$DPT@dm, dm)){
-    dpt <- destiny::DPT(dm, tips = Integration.l$root)
-    Integration.l$DPT <- dpt
-  }else{
-    dpt <- Integration.l$DPT
-  }
+  dpt <- destiny::DPT(dm, tips = Integration.l$root)
   
   terminel.idx <- which(dpt@tips[,1])
   term.idx <- terminel.idx[which(terminel.idx != root.idx)]
@@ -356,7 +348,6 @@ Plot_DiffusionMap <- function(Integration.l,
              add = TRUE)
     }
   }
-  return(Integration.l)
 }
 
 
