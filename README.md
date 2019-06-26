@@ -3,6 +3,8 @@
 LandSCENT package
 =========
 
+[![DOI](https://zenodo.org/badge/167301603.svg)](https://zenodo.org/badge/latestdoi/167301603)
+
 <!-- badges: start -->
 <!-- badges: end -->
 `LandSCENT` (Landscape Single Cell Entropy) is a R-package for the analysis of single-cell RNA-Seq data. One important feature of this package is the computation of signaling entropy, which allows single cells to be ordered according to differentiation potency. LandSCENT also integrates cell density with potency distribution to dissect cell types across all potency states and generates high-quality figures to show this. In the latest version, we employ diffusion maps to infer trajectory within the data and also generate figures to show this.
