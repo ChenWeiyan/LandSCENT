@@ -4,10 +4,19 @@
 \alias{InferLandmark}
 \title{Infer co-expression landmarks from cells' SR values}
 \usage{
-InferLandmark(Integration.l, pheno.v = NULL, pctG = 0.01,
-  Component_use = NULL, reduceMethod = c("PCA", "tSNE"),
-  clusterMethod = c("PAM", "dbscan"), k_pam = 9, eps_dbscan = 10,
-  minPts_dbscan = 5, pctLM = 0.05, pcorTH = 0.1)
+InferLandmark(
+  Integration.l,
+  pheno.v = NULL,
+  pctG = 0.01,
+  Component_use = NULL,
+  reduceMethod = c("PCA", "tSNE"),
+  clusterMethod = c("PAM", "dbscan"),
+  k_pam = 9,
+  eps_dbscan = 10,
+  minPts_dbscan = 5,
+  pctLM = 0.05,
+  pcorTH = 0.1
+)
 }
 \arguments{
 \item{Integration.l}{A list object from \code{InferPotency} function.}

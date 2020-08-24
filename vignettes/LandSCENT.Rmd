@@ -106,13 +106,13 @@ is.mito <- grepl("^MT", rownames(example.sce))
 is.spike <- grepl("^ERCC", rownames(example.sce))
 
 counts(example.sce) <- as(counts(example.sce), "dgCMatrix")
-example.sce <- calculateQCMetrics(example.sce, feature_controls=list(Spike=is.spike, Mt=is.mito))
+example.QC <- perCellQCMetrics(example.sce, subsets=list(Spike=is.spike, Mito=is.mito), flatten=FALSE)
 
 ### Cell Filtering wih isOutlier function
 
-libsize.drop <- isOutlier(example.sce$total_counts, nmads=5, type="lower", log=TRUE);
-mito.drop <- isOutlier(example.sce$pct_counts_Mt, nmads=5, type="higher");
-spike.drop <- isOutlier(example.sce$pct_counts_Spike, nmads=5, type="higher");
+libsize.drop <- isOutlier(example.QC$total, nmads=5, type="lower", log=TRUE);
+mito.drop <- isOutlier(example.QC$subsets$Mito$sum, nmads=5, type="higher");
+spike.drop <- isOutlier(example.QC$subsets$Spike$sum, nmads=10, type="higher");
 
 filter_example.sce <- example.sce[, !(libsize.drop | mito.drop | spike.drop)]
 phenoExample.v <- phenoExample.v[!(libsize.drop | mito.drop | spike.drop)]
@@ -135,7 +135,7 @@ Scaling normalization is then used to remove cell-specific biases, e.g. coverage
 **Importantly**, we need to add an offset value of 1.1 before log-transformation. The offset is added in order to ensure that the minimum value after log-transformation would not be 0, but a nonzero value (typically log2(1.1)~0.14). We do not want zeroes in our final matrix since the computation of signaling entropy rate involves ratios of gene expression values and zeros in the denominator are undefined.
 
 ```{r normalization, eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
-example.sce <- normalize(example.sce, log_exprs_offset = 1.1)
+example.sce <- logNormCounts(example.sce, pseudo_count = 1.1)
 example.m <- as.matrix(assay(example.sce, i = "logcounts"))
 min(example.m)
 ```

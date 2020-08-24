@@ -1,6 +1,6 @@
 Package: LandSCENT
 Title: Landscape Single Cell Entropy
-Version: 0.99.3
+Version: 0.99.5
 Description: LandSCENT (Landscape Single Cell Entropy) is a R-package 
         for the analysis of single-cell RNA-Seq data. One important 
         feature of this package is the computation of signaling entropy, 
@@ -16,13 +16,13 @@ Imports: cluster, corpcor, igraph, isva, mclust, parallel, stats,
         grDevices, graphics, marray, scater, Biobase, BiocGenerics,
         SummarizedExperiment, SingleCellExperiment, Rtsne, irlba,
         plot3D, MASS, dbscan, monocle, DelayedArray, Matrix, destiny,
-        ggplot2, ggthemes
+        ggplot2, ggthemes, ccaPP, wordspace
 Suggests: roxygen2, BiocStyle, knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 License: GPL-3
 LazyData: true
 NeedsCompilation: no
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Encoding: UTF-8
 URL: https://github.com/ChenWeiyan/LandSCENT
 BugReports: https://github.com/ChenWeiyan/LandSCENT/issues

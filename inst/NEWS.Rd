@@ -26,3 +26,15 @@
     \item Integrate diffusion maps to infer naive trajectory.
   }
 }
+
+\section{Version 0.99.4}{
+  \itemize{
+    \item Update data integration procedure.
+  }
+}
+
+\section{Version 0.99.5}{
+  \itemize{
+    \item Update CCAT method and plot functions.
+  }
+}

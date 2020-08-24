@@ -4,7 +4,9 @@
 \name{rawExample.m}
 \alias{rawExample.m}
 \title{Raw example scRNA-seq data matrix}
-\format{A matrix with 19097 rows(genes) and 100 columns(cells)}
+\format{
+A matrix with 19097 rows(genes) and 100 columns(cells)
+}
 \usage{
 data(rawExample.m)
 }

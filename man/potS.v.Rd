@@ -4,7 +4,9 @@
 \name{potS.v}
 \alias{potS.v}
 \title{Potency states for example plot scRNA-seq data}
-\format{A numeric vector includes 3473 elements}
+\format{
+A numeric vector includes 3473 elements
+}
 \usage{
 data(potS.v)
 }

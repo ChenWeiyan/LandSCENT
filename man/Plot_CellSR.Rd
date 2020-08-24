@@ -4,12 +4,23 @@
 \alias{Plot_CellSR}
 \title{Plot Cell density with SR values}
 \usage{
-Plot_CellSR(Integration.l, coordinates = NULL, num_grid = 50,
-  phi = 20, theta = 20, colpersp = NULL, colimage = NULL,
-  colkeypersp = list(length = 0.2, width = 0.4, shift = 0.2, cex.axis =
-  0.6, cex.clab = 0.7), colkeyimage = list(length = 0.2, width = 0.4,
-  shift = -0.2, cex.axis = 0.6, cex.clab = 0.7), lighting = FALSE,
-  lphi = 90, bty = "b", PDF = TRUE)
+Plot_CellSR(
+  Integration.l,
+  coordinates = NULL,
+  num_grid = 50,
+  phi = 20,
+  theta = 20,
+  colpersp = NULL,
+  colimage = NULL,
+  colkeypersp = list(length = 0.2, width = 0.4, shift = 0.2, cex.axis = 0.6, cex.clab =
+    0.7),
+  colkeyimage = list(length = 0.2, width = 0.4, shift = -0.2, cex.axis = 0.6, cex.clab
+    = 0.7),
+  lighting = FALSE,
+  lphi = 90,
+  bty = "b",
+  PDF = TRUE
+)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{InferLandmark} function}

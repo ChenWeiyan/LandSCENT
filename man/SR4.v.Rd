@@ -4,7 +4,9 @@
 \name{SR4.v}
 \alias{SR4.v}
 \title{SR values for example plot scRNA-seq data}
-\format{A vector with 3473 elements}
+\format{
+A vector with 3473 elements
+}
 \usage{
 data(SR4.v)
 }

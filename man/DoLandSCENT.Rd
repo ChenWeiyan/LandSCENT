@@ -4,8 +4,16 @@
 \alias{DoLandSCENT}
 \title{Runs the LandSCENT algorithm}
 \usage{
-DoLandSCENT(exp.m, ppiA.m, log_trans = FALSE, mc.cores = 1,
-  pheno.v = NULL, coordinates = NULL, PLOT = TRUE, PDF = TRUE)
+DoLandSCENT(
+  exp.m,
+  ppiA.m,
+  log_trans = FALSE,
+  mc.cores = 1,
+  pheno.v = NULL,
+  coordinates = NULL,
+  PLOT = TRUE,
+  PDF = TRUE
+)
 }
 \arguments{
 \item{exp.m}{Can be three major kinds of input:

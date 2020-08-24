@@ -4,9 +4,17 @@
 \alias{Plot_DiffusionMap}
 \title{Visualize diffusion map}
 \usage{
-Plot_DiffusionMap(Integration.l, dim = c(1, 2, 3), color_by = c("SR",
-  "DPT"), TIPs = c(1, 2, 3), phi = 20, theta = 40, bty = "g", ...,
-  PDF = FALSE)
+Plot_DiffusionMap(
+  Integration.l,
+  dim = c(1, 2, 3),
+  color_by = c("SR", "DPT"),
+  TIPs = c(1, 2, 3),
+  phi = 20,
+  theta = 40,
+  bty = "g",
+  ...,
+  PDF = FALSE
+)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{DoDiffusionMap} function}

@@ -4,7 +4,9 @@
 \name{phenoscChu.v}
 \alias{phenoscChu.v}
 \title{Phenotype information for Chu et al. scRNA-seq data}
-\format{A character vector includes 1018 elements}
+\format{
+A character vector includes 1018 elements
+}
 \usage{
 data(phenoscChu.v)
 }

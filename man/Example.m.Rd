@@ -4,7 +4,9 @@
 \name{Example.m}
 \alias{Example.m}
 \title{Normalized example scRNA-seq data matrix}
-\format{A matrix with 18935 rows and 100 columns}
+\format{
+A matrix with 18935 rows and 100 columns
+}
 \usage{
 data(Example.m)
 }

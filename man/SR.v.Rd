@@ -4,7 +4,9 @@
 \name{SR.v}
 \alias{SR.v}
 \title{SR values for example scRNA-seq data}
-\format{A vector with 96 elements}
+\format{
+A vector with 96 elements
+}
 \usage{
 data(SR.v)
 }

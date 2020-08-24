@@ -4,7 +4,9 @@
 \name{net13Jun12.m}
 \alias{net13Jun12.m}
 \title{Human protein-protein interaction network 13Jun12}
-\format{A matrix with 8434 rows and 8434 columns}
+\format{
+A matrix with 8434 rows and 8434 columns
+}
 \usage{
 data(net13Jun12.m)
 }

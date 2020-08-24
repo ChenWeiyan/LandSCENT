@@ -4,12 +4,24 @@
 \alias{Plot_LandSR}
 \title{Plot Landscape with potency states}
 \usage{
-Plot_LandSR(Integration.l, coordinates = NULL, num_grid = 50,
-  phi = 20, theta = 20, colpersp = NULL, colimage = NULL,
-  colkeypersp = list(length = 0.2, width = 0.4, shift = 0.15, cex.axis =
-  0.6, cex.clab = 0.65), colkeyimage = list(length = 0.2, width = 0.4,
-  shift = -0.15, cex.axis = 0.6, cex.clab = 0.65), lighting = FALSE,
-  lphi = 90, bty = "b", scale_z = TRUE, PDF = TRUE)
+Plot_LandSR(
+  Integration.l,
+  coordinates = NULL,
+  num_grid = 50,
+  phi = 20,
+  theta = 20,
+  colpersp = NULL,
+  colimage = NULL,
+  colkeypersp = list(length = 0.2, width = 0.4, shift = 0.15, cex.axis = 0.6, cex.clab
+    = 0.65),
+  colkeyimage = list(length = 0.2, width = 0.4, shift = -0.15, cex.axis = 0.6, cex.clab
+    = 0.65),
+  lighting = FALSE,
+  lphi = 90,
+  bty = "b",
+  scale_z = TRUE,
+  PDF = TRUE
+)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{InferLandmark} function}

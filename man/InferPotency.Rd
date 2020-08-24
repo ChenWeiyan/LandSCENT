@@ -4,8 +4,7 @@
 \alias{InferPotency}
 \title{Infer Distinct potency states from cells' SR values}
 \usage{
-InferPotency(Integration.l, pheno.v = NULL, diffvar = TRUE,
-  maxPS = 5)
+InferPotency(Integration.l, pheno.v = NULL, diffvar = TRUE, maxPS = 5)
 }
 \arguments{
 \item{Integration.l}{A list object from \code{CompSRana} function.}

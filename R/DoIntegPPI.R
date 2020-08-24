@@ -39,8 +39,23 @@
 #' 
 #' @return data
 #' Normalized data matrix
+#' 
+#' @return degree.v
+#' The nodes(gene) degree in the integrated network
+#' 
+#' @return dgC.m
+#' An additional dgCMatrix object of the input data, for the convenience 
+#' of later on calculation
 #'  
 #' @references 
+#' Chen, Weiyan, et al.
+#' \emph{Single-cell landscape in mammary epithelium reveals 
+#' bipotent-like cells associated with breast cancer risk 
+#' and outcome.}
+#' Communications Biology 2 (2019): 306.
+#' doi:\href{https://doi.org/10.1038/s42003-019-0554-8}{
+#' 10.1038/s42003-019-0554-8}. 
+#' 
 #' Teschendorff AE, Tariq Enver. 
 #' \emph{Single-cell entropy for accurate estimation of differentiation 
 #' potency from a cell’s transcriptome.}
@@ -106,6 +121,8 @@
 #' @importFrom igraph clusters
 #' @importFrom SummarizedExperiment assay
 #' @importFrom DelayedArray isEmpty
+#' @importFrom Matrix colSums
+#' @importFrom methods as
 #' @import monocle
 #' @export
 #'     
@@ -114,7 +131,37 @@ DoIntegPPI <- function(exp.m,
                        log_trans = FALSE)
 {
     # set input data matrix class
-    data.class <- class(exp.m)
+    data.class <- class(exp.m)[1]
+    
+    ## set row_names & col_names
+    row_names <- rownames(exp.m)
+    col_names <- colnames(exp.m)
+    
+    if (is.null(col_names)) {
+        warning(paste0("No cell names been specified, forcedly set as cell_1 to cell_", 
+                       ncol(exp.m), "."))
+        colnames(exp.m) <- paste0("cell_", 1:ncol(exp.m))
+        col_names <- paste0("cell_", 1:ncol(exp.m))
+    }
+    
+    # set common gene IDs
+    commonEID.v <- intersect(rownames(ppiA.m), row_names)
+    
+    # check the consistency of gene IDs
+    if (DelayedArray::isEmpty(commonEID.v) == TRUE) {
+        stop("scRNA-seq data should have the same gene identifier with the network!")
+    }
+    
+    # get maximum connected network
+    match(commonEID.v,rownames(ppiA.m)) -> map2.idx
+    adj.m <- ppiA.m[map2.idx, map2.idx]
+    
+    gr.o <- igraph::graph.adjacency(adj.m,mode="undirected")
+    comp.l <- igraph::clusters(gr.o)
+    cd.v <- summary(factor(comp.l$member))
+    mcID <- as.numeric(names(cd.v)[which.max(cd.v)])
+    maxc.idx <- which(comp.l$member==mcID)
+    adjMC.m <- adj.m[maxc.idx, maxc.idx]
     
     # select log-normalization methods based on data class
     if (data.class == "SingleCellExperiment") {
@@ -127,47 +174,70 @@ DoIntegPPI <- function(exp.m,
                                           Biobase::pData(exp.m)[, 'Size_Factor']))
         data.m <- log2(data.m + 1.1)
     }else{
-        data.m <- as.matrix(exp.m)
+        
         if (log_trans) {
-            TRC.v <- colSums(exp.m)
-            maxC <- max(TRC.v)
-            for (i in seq_len(dim(data.m)[2])) {
-                temp <- maxC / TRC.v[i]
-                data.m[, i] <- log2(exp.m[, i] * temp + 1.1)
+            
+            if (data.class == "dgCMatrix") {
+                temp.m <- exp.m
+                rm(exp.m)
+                gc(verbose = FALSE)
+            }else{
+                ### set data matrix as dgCMatrix
+                temp.m <- as(exp.m, "dgCMatrix")
+                rm(exp.m)
+                gc(verbose = FALSE)
             }
+            
+            ### column normalization
+            # pre-compute maximum library size
+            lib_max <- max(Matrix::colSums(temp.m))
+            temp.m <- wordspace::normalize.cols(temp.m, method = "manhattan")
+            # save additional dgCMatrix
+            dgC.m <- temp.m
+            dgC.m@x <- log2((dgC.m@x * lib_max) + 1)
+            temp.m@x <- log2((temp.m@x * lib_max) + 1.1)
+            
+            temp.dgT <- as(temp.m, "dgTMatrix")
+            data.m <- as.matrix(temp.dgT)
+            data.m[data.m == 0] <- log2(1.1)
+            rm(temp.m, temp.dgT)
+            gc(verbose = FALSE)
+        }else{
+            data.m <- exp.m
+            dgC.m <- data.m - min(data.m)
+            dgC.m <- as(dgC.m, "dgCMatrix")
+            rm(exp.m)
+            gc(verbose = FALSE)
         }
+        
     }
     
     if (min(data.m) == 0) {
-        stop("Input matrix must have non-zero minimal value, please set 
-             log_trans = TRUE!")
+        stop(paste0("Input matrix must have non-zero minimal value, please set", 
+                    " 'log_trans' = TRUE!"))
     }
     
-    commonEID.v <- intersect(rownames(ppiA.m),rownames(data.m))
+    match(rownames(adjMC.m), row_names) -> map1.idx
+    expMC.m <- data.m[map1.idx ,]
+    dgC.m <- dgC.m[map1.idx ,]
     
-    if (DelayedArray::isEmpty(commonEID.v) == TRUE) {
-        stop("scRNA-seq data should have the same gene identifier with the network!")
+    if (!identical(rownames(dgC.m), rownames(expMC.m))) {
+        stop("Non identical!!!")
     }
     
-    match(commonEID.v,rownames(data.m)) -> map1.idx
-    expPIN.m <- data.m[map1.idx,]
-    
-    match(commonEID.v,rownames(ppiA.m)) -> map2.idx
-    adj.m <- ppiA.m[map2.idx,map2.idx]
-    
-    gr.o <- igraph::graph.adjacency(adj.m,mode="undirected")
-    comp.l <- igraph::clusters(gr.o)
-    cd.v <- summary(factor(comp.l$member))
-    mcID <- as.numeric(names(cd.v)[which.max(cd.v)])
-    maxc.idx <- which(comp.l$member==mcID)
-    adjMC.m <- adj.m[maxc.idx,maxc.idx]
-    expMC.m <- expPIN.m[maxc.idx,]
+    # compute node degree
+    gr.o <- igraph::graph.adjacency(adjMC.m, mode="undirected")
+    degree.v <- igraph::degree(gr.o)
+    degree.v <- degree.v[rownames(expMC.m)]
     
     if (data.class == "SingleCellExperiment") {
-        return(list(data.sce = exp.m, expMC = expMC.m, adjMC = adjMC.m, data = data.m))
+        return(list(data.sce = exp.m, expMC = expMC.m, adjMC = adjMC.m, 
+                    data = data.m, degree.v = degree.v, dgC.m = dgC.m))
     }else if (data.class == "CellDataSet") {
-        return(list(data.cds = exp.m, expMC = expMC.m, adjMC = adjMC.m, data = data.m))
+        return(list(data.cds = exp.m, expMC = expMC.m, adjMC = adjMC.m, 
+                    data = data.m, degree.v = degree.v, dgC.m = dgC.m))
     }else{
-        return(list(expMC = expMC.m, adjMC = adjMC.m, data = data.m))
+        return(list(expMC = expMC.m, adjMC = adjMC.m, 
+                    data = data.m, degree.v = degree.v, dgC.m = dgC.m))
     }
 }

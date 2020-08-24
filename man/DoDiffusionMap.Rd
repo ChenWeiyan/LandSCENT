@@ -4,8 +4,14 @@
 \alias{DoDiffusionMap}
 \title{Construct diffusion map and select root cell}
 \usage{
-DoDiffusionMap(Integration.l, mean_gap = 1, sd_gap = 1,
-  root = c("cell", "state"), num_comp = 3, k = 30)
+DoDiffusionMap(
+  Integration.l,
+  mean_gap = 1,
+  sd_gap = 1,
+  root = c("cell", "state"),
+  num_comp = 3,
+  k = 30
+)
 }
 \arguments{
 \item{Integration.l}{Typically, it is the output from \code{InferLandmark} function}
